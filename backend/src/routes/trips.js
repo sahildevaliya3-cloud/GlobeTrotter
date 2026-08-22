@@ -181,6 +181,88 @@ export function createTripsRouter(prisma) {
     }
   });
 
+  router.post("/:id/stops", async (req, res) => {
+    try {
+      if (!isValidUuid(req.params.id)) {
+        return res.status(404).json({ error: "Trip not found." });
+      }
+
+      const { city_id: cityId } = req.body ?? {};
+
+      if (!cityId || !isValidUuid(cityId)) {
+        return res.status(400).json({ error: "A valid city_id is required." });
+      }
+
+      const trip = await prisma.trip.findUnique({
+        where: { id: req.params.id },
+      });
+
+      if (!trip) {
+        return res.status(404).json({ error: "Trip not found." });
+      }
+
+      if (trip.userId !== req.user.id) {
+        return res.status(403).json({ error: "You do not have access to this trip." });
+      }
+
+      const city = await prisma.city.findUnique({
+        where: { id: cityId },
+      });
+
+      if (!city) {
+        return res.status(404).json({ error: "City not found." });
+      }
+
+      const existingStop = await prisma.stop.findFirst({
+        where: { tripId: trip.id, cityId },
+      });
+
+      if (existingStop) {
+        return res.status(409).json({ error: "This city is already on the trip." });
+      }
+
+      const maxOrder = await prisma.stop.aggregate({
+        where: { tripId: trip.id },
+        _max: { orderIndex: true },
+      });
+
+      const orderIndex = (maxOrder._max.orderIndex ?? -1) + 1;
+
+      const stop = await prisma.stop.create({
+        data: {
+          tripId: trip.id,
+          cityId,
+          startDate: trip.startDate,
+          endDate: trip.endDate,
+          orderIndex,
+        },
+        include: { city: true },
+      });
+
+      return res.status(201).json({
+        stop: {
+          id: stop.id,
+          tripId: stop.tripId,
+          cityId: stop.cityId,
+          startDate: stop.startDate,
+          endDate: stop.endDate,
+          orderIndex: stop.orderIndex,
+          city: {
+            id: stop.city.id,
+            name: stop.city.name,
+            country: stop.city.country,
+            cost_index: stop.city.costIndex,
+            popularity_score: stop.city.popularityScore,
+            image_url: stop.city.imageUrl,
+          },
+        },
+      });
+    } catch (error) {
+      console.error("POST /trips/:id/stops", error);
+      return res.status(500).json({ error: "Something went wrong. Please try again." });
+    }
+  });
+
   router.get("/:id", async (req, res) => {
     try {
       if (!isValidUuid(req.params.id)) {

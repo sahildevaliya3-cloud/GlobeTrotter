@@ -32,6 +32,31 @@ export type TripResponse = {
   trip: Trip;
 };
 
+export type City = {
+  id: string;
+  name: string;
+  country: string;
+  cost_index: number;
+  popularity_score: number;
+  image_url: string | null;
+};
+
+export type CitiesResponse = {
+  cities: City[];
+};
+
+export type StopResponse = {
+  stop: {
+    id: string;
+    tripId: string;
+    cityId: string;
+    startDate: string;
+    endDate: string;
+    orderIndex: number;
+    city: City;
+  };
+};
+
 export class ApiError extends Error {
   status: number;
 
@@ -127,6 +152,30 @@ export function createTrip(
     method: "POST",
     token,
     body: JSON.stringify(input),
+  });
+}
+
+export function searchCities(
+  token: string,
+  params: { search?: string; country?: string } = {}
+) {
+  const query = new URLSearchParams();
+  if (params.search?.trim()) query.set("search", params.search.trim());
+  if (params.country?.trim()) query.set("country", params.country.trim());
+
+  const suffix = query.toString() ? `?${query.toString()}` : "";
+  return request<CitiesResponse>(`/cities${suffix}`, { token });
+}
+
+export function addStopToTrip(
+  token: string,
+  tripId: string,
+  cityId: string
+) {
+  return request<StopResponse>(`/trips/${tripId}/stops`, {
+    method: "POST",
+    token,
+    body: JSON.stringify({ city_id: cityId }),
   });
 }
 

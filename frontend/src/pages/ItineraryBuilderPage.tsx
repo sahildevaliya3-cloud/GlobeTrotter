@@ -14,18 +14,25 @@ export function ItineraryBuilderPage() {
           Build your itinerary
         </h1>
         <p className="mt-2 text-[var(--muted)]">
-          Your trip was created successfully. Add stops, cities, and activities
-          here in the next step.
+          Add cities to your trip, then schedule activities for each stop.
         </p>
-        {id ? (
-          <p className="mt-4 text-sm text-[var(--muted)]">Trip ID: {id}</p>
-        ) : null}
-        <Link
-          to="/trips"
-          className="mt-6 inline-flex text-sm font-semibold text-[var(--accent)] underline-offset-2 hover:underline"
-        >
-          Back to My Trips
-        </Link>
+
+        <div className="mt-6 flex flex-wrap gap-3">
+          {id ? (
+            <Link
+              to={`/trips/${id}/cities`}
+              className="inline-flex rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--accent-dark)]"
+            >
+              Search &amp; Add Cities
+            </Link>
+          ) : null}
+          <Link
+            to="/trips"
+            className="inline-flex rounded-xl border border-[var(--line)] px-5 py-2.5 text-sm font-semibold text-[var(--ink)] transition hover:bg-[#f4f7fa]"
+          >
+            Back to My Trips
+          </Link>
+        </div>
       </div>
     </AppLayout>
   );

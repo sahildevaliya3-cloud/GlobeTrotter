@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 import { requireAuth } from "./middleware/requireAuth.js";
+import { createCitiesRouter } from "./routes/cities.js";
 import { createTripsRouter } from "./routes/trips.js";
 
 const app = express();
@@ -121,6 +122,7 @@ app.post("/auth/login", async (req, res) => {
   }
 });
 
+app.use("/cities", requireAuth, createCitiesRouter(prisma));
 app.use("/trips", requireAuth, createTripsRouter(prisma));
 
 app.listen(PORT, () => {
