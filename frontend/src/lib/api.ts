@@ -353,6 +353,29 @@ export function addActivityToStop(
   });
 }
 
+export function updateTripActivity(
+  token: string,
+  tripActivityId: string,
+  input: {
+    scheduled_date?: string;
+    scheduled_time?: string;
+    custom_cost?: number | string | null;
+  }
+) {
+  return request<TripActivityResponse>(`/trip-activities/${tripActivityId}`, {
+    method: "PUT",
+    token,
+    body: JSON.stringify(input),
+  });
+}
+
+export function deleteTripActivity(token: string, tripActivityId: string) {
+  return request<void>(`/trip-activities/${tripActivityId}`, {
+    method: "DELETE",
+    token,
+  });
+}
+
 export function formatActivityCost(cost: number | string) {
   const value = typeof cost === "string" ? Number(cost) : cost;
   if (Number.isNaN(value)) return "$0";

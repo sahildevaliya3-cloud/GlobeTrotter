@@ -11,7 +11,7 @@ type ViewMode = "list" | "calendar";
 
 export function ItineraryViewPage() {
   const { id: tripId } = useParams();
-  const { trip, loading, error } = useTripDetail(tripId);
+  const { trip, loading, error, reload } = useTripDetail(tripId);
   const [viewMode, setViewMode] = useState<ViewMode>("list");
 
   const stops = sortStops(trip?.stops ?? []);
@@ -185,7 +185,12 @@ export function ItineraryViewPage() {
         ) : viewMode === "list" ? (
           <ItineraryListView stops={stops} />
         ) : (
-          <ItineraryCalendarView />
+          <ItineraryCalendarView
+            stops={stops}
+            startDate={trip?.startDate}
+            endDate={trip?.endDate}
+            onRefresh={reload}
+          />
         )}
       </section>
     </AppLayout>
