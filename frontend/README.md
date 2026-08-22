@@ -41,7 +41,7 @@ cp frontend/.env.example frontend/.env
 
 ## OAuth Sign-In Setup
 
-The app supports **"Continue with Google"** and **"Continue with Apple"** buttons on the Login/Signup screens.
+The app supports **"Continue with Google"** on the Login/Signup screens.
 
 ### Google OAuth
 
@@ -63,56 +63,6 @@ GOOGLE_CALLBACK_URL="http://localhost:3001/auth/google/callback"
 
 ---
 
-### Apple Sign In
-
-> [!IMPORTANT]
-> **Sign In with Apple requires a paid Apple Developer account ($99/year).**  
-> Without credentials, the Apple button is shown but disabled in the UI.
-
-> [!WARNING]
-> **Apple requires HTTPS** for callback URLs even in some development environments.  
-> For local testing you must use a tunnelling service like [ngrok](https://ngrok.com) to expose your backend over HTTPS.
-
-#### Setup Steps
-
-1. Log in to [developer.apple.com](https://developer.apple.com) → **Certificates, Identifiers & Profiles**
-
-2. **Create an App ID:**
-   - Identifiers → **+** → App IDs → App
-   - Enable the **Sign In with Apple** capability
-   - Note your **Team ID** (shown top-right in the portal)
-
-3. **Create a Services ID** (this is the OAuth client):
-   - Identifiers → **+** → Services IDs
-   - Set the identifier (e.g. `com.yourapp.siwa`) → this becomes `APPLE_CLIENT_ID`
-   - Click **Configure** next to Sign In with Apple:
-     - Primary App ID: select your App ID from step 2
-     - Return URLs: add your `APPLE_CALLBACK_URL` (must be HTTPS)
-
-4. **Create a Sign In with Apple Key:**
-   - Keys → **+** → check **Sign In with Apple** → Configure (select your App ID)
-   - Download the `.p8` private key file — **you can only download it once**
-   - Note the **Key ID**
-
-5. Fill in `backend/.env`:
-
-```env
-APPLE_CLIENT_ID="com.yourapp.siwa"
-APPLE_TEAM_ID="ABCD123456"
-APPLE_KEY_ID="XYZKEY1234"
-# Paste the contents of the .p8 file, replacing newlines with \n:
-APPLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIGH...\n-----END PRIVATE KEY-----"
-APPLE_CALLBACK_URL="https://api.yourdomain.com/auth/apple/callback"
-```
-
-6. Set the Apple feature flag in `frontend/.env`:
-
-```env
-VITE_APPLE_ENABLED=true
-```
-
----
-
 ## Architecture Notes
 
 ### One-Time Code (OTC) OAuth Pattern
@@ -126,11 +76,11 @@ The frontend (`/auth/callback`) exchanges the code via `POST /auth/exchange` →
 
 ### Account Linking
 
-If a Google/Apple email matches an existing email/password account, the OAuth identity is **linked to that existing account** — no duplicate user row is created.
+If a Google email matches an existing email/password account, the OAuth identity is **linked to that existing account** — no duplicate user row is created.
 
 ### OAuth-only accounts
 
-If a user signed up via Google/Apple, they have no password. Attempting to sign in with their email and a password returns:
+If a user signed up via Google, they have no password. Attempting to sign in with their email and a password returns:
 > *"This account uses Google sign-in. Please use the 'Google' button on the login screen."*
 
 ---
@@ -145,6 +95,5 @@ If a user signed up via Google/Apple, they have no password. Attempting to sign 
 
 After deploying, update:
 - `GOOGLE_CALLBACK_URL` → your production backend URL
-- `APPLE_CALLBACK_URL` → your production backend URL (HTTPS required)
 - `FRONTEND_URL` → your production frontend URL
-- Add the production callback URLs to Google Cloud Console and Apple Developer Portal
+- Add the production callback URLs to Google Cloud Console

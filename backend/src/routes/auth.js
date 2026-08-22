@@ -1,5 +1,5 @@
 /**
- * auth.js — OAuth routes (Google + Apple) + one-time-code (OTC) exchange
+ * auth.js — OAuth routes (Google) + one-time-code (OTC) exchange
  *
  * Flow:
  *   Browser → GET /auth/google
@@ -104,51 +104,6 @@ async function findOrCreateOAuthUser(prisma, { provider, oauthId, email, name, p
   });
 }
 
-// ── Apple strategy (lazy — only configured if credentials present) ─────────────
-function tryConfigureApple(passport) {
-  const APPLE_CLIENT_ID = process.env.APPLE_CLIENT_ID;
-  const APPLE_TEAM_ID = process.env.APPLE_TEAM_ID;
-  const APPLE_KEY_ID = process.env.APPLE_KEY_ID;
-  const APPLE_PRIVATE_KEY = process.env.APPLE_PRIVATE_KEY;
-  const APPLE_CALLBACK_URL = process.env.APPLE_CALLBACK_URL;
-
-  if (!APPLE_CLIENT_ID || !APPLE_TEAM_ID || !APPLE_KEY_ID || !APPLE_PRIVATE_KEY) {
-    return false; // credentials not configured
-  }
-
-  // passport-apple is imported dynamically so the server still starts without Apple creds
-  import("passport-apple").then(({ default: AppleStrategy }) => {
-    passport.use(
-      new AppleStrategy(
-        {
-          clientID: APPLE_CLIENT_ID,
-          teamID: APPLE_TEAM_ID,
-          keyID: APPLE_KEY_ID,
-          privateKeyString: APPLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
-          callbackURL: APPLE_CALLBACK_URL,
-          scope: ["name", "email"],
-          passReqToCallback: false,
-        },
-        (accessToken, refreshToken, idToken, profile, done) => {
-          // profile.id is the Apple sub
-          done(null, {
-            oauthId: profile.id || idToken?.sub,
-            email: profile.email || idToken?.email,
-            name: profile.name
-              ? `${profile.name.firstName || ""} ${profile.name.lastName || ""}`.trim()
-              : "Apple User",
-            photoUrl: null,
-          });
-        }
-      )
-    );
-  }).catch((err) => {
-    console.warn("[OAuth] passport-apple not available:", err.message);
-  });
-
-  return true;
-}
-
 // ── Router factory ─────────────────────────────────────────────────────────────
 export function createAuthRouter(prisma) {
   const router = Router();
@@ -181,9 +136,6 @@ export function createAuthRouter(prisma) {
   // Minimal Passport serialisation (not used for sessions — just satisfies Passport internals)
   passport.serializeUser((user, done) => done(null, user));
   passport.deserializeUser((user, done) => done(null, user));
-
-  // Configure Apple (no-op if creds missing)
-  const appleEnabled = tryConfigureApple(passport);
 
   // ── POST /auth/exchange ─────────────────────────────────────────────────────
   // Public — frontend exchanges one-time code for JWT
@@ -236,66 +188,10 @@ export function createAuthRouter(prisma) {
     }
   );
 
-  // ── GET /auth/apple ─────────────────────────────────────────────────────────
-  router.get("/apple", (req, res, next) => {
-    if (!appleEnabled) {
-      return res.status(503).json({
-        error:
-          "Apple sign-in requires a paid Apple Developer account. Configure APPLE_* env vars to enable.",
-      });
-    }
-    passport.authenticate("apple", { session: false })(req, res, next);
-  });
-
-  // ── POST /auth/apple/callback ───────────────────────────────────────────────
-  // Apple sends a POST (not GET) on its first callback
-  router.post(
-    "/apple/callback",
-    (req, res, next) => {
-      if (!appleEnabled) {
-        return res.redirect(`${FRONTEND_URL}/login?error=oauth_failed`);
-      }
-      passport.authenticate("apple", {
-        session: false,
-        failureRedirect: `${FRONTEND_URL}/login?error=oauth_failed`,
-      })(req, res, next);
-    },
-    async (req, res) => {
-      try {
-        const profile = req.user;
-        // Apple only sends name on the FIRST sign-in; subsequent calls won't have it
-        const nameFromForm =
-          req.body?.user
-            ? JSON.parse(req.body.user)?.name
-            : null;
-        const displayName = profile.name ||
-          (nameFromForm
-            ? `${nameFromForm.firstName || ""} ${nameFromForm.lastName || ""}`.trim()
-            : "Apple User");
-
-        const dbUser = await findOrCreateOAuthUser(prisma, {
-          provider: "apple",
-          oauthId: profile.oauthId,
-          email: profile.email,
-          name: displayName,
-          photoUrl: null,
-        });
-
-        const token = signToken(dbUser);
-        const code = issueOTC(token, publicUser(dbUser));
-        return res.redirect(`${FRONTEND_URL}/auth/callback?code=${code}`);
-      } catch (err) {
-        console.error("[OAuth] Apple callback error:", err);
-        return res.redirect(`${FRONTEND_URL}/login?error=oauth_failed`);
-      }
-    }
-  );
-
   // ── GET /auth/status — check which providers are enabled ───────────────────
   router.get("/status", (_req, res) => {
     res.json({
       google: googleEnabled,
-      apple: appleEnabled,
     });
   });
 
