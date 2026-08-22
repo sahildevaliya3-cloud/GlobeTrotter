@@ -4,6 +4,8 @@ import cors from "cors";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
+import { requireAuth } from "./middleware/requireAuth.js";
+import { createTripsRouter } from "./routes/trips.js";
 
 const app = express();
 const prisma = new PrismaClient();
@@ -118,6 +120,8 @@ app.post("/auth/login", async (req, res) => {
     return res.status(500).json({ error: "Something went wrong. Please try again." });
   }
 });
+
+app.use("/trips", requireAuth, createTripsRouter(prisma));
 
 app.listen(PORT, () => {
   console.log(`API listening on http://localhost:${PORT}`);

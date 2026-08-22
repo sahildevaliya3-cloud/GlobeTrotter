@@ -8,9 +8,12 @@
     "dev": "node --watch src/index.js",
     "start": "node src/index.js",
     "postgres:start": "node scripts/start-postgres.mjs",
+    "test:trips": "node scripts/test-trips.mjs",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "seed": "node prisma/seed.js",
+    "seed:force": "node prisma/seed.js --force"
   },
   "dependencies": {
     "@prisma/client": "^6.14.0",
@@ -28,5 +31,8 @@
     "@types/node": "^26.2.0",
     "embedded-postgres": "^18.4.0-beta.17",
     "prisma": "^6.14.0"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   }
 }
