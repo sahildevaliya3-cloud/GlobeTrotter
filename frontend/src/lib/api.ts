@@ -6,6 +6,8 @@ export type Trip = {
   startDate: string;
   endDate: string;
   coverPhotoUrl: string | null;
+  targetBudget?: number | null;
+  target_budget?: number | null;
   isPublic: boolean;
   createdAt: string;
   stopCount?: number;
@@ -74,6 +76,27 @@ export type TripsResponse = {
 
 export type TripResponse = {
   trip: Trip;
+};
+
+export type CategoryBreakdownItem = {
+  category: string;
+  cost: number;
+  percentage: number;
+};
+
+export type TripBudget = {
+  tripId: string;
+  totalCost: number;
+  targetBudget: number | null;
+  isOverBudget: boolean;
+  remainingBudget: number | null;
+  numberOfDays: number;
+  averageCostPerDay: number;
+  categoryBreakdown: CategoryBreakdownItem[];
+};
+
+export type TripBudgetResponse = {
+  budget: TripBudget;
 };
 
 export type City = {
@@ -243,6 +266,7 @@ export function createTrip(
     start_date: string;
     end_date: string;
     cover_photo_url?: string;
+    target_budget?: number | null;
   }
 ) {
   return request<TripResponse>("/trips", {
@@ -250,6 +274,29 @@ export function createTrip(
     token,
     body: JSON.stringify(input),
   });
+}
+
+export function updateTrip(
+  token: string,
+  tripId: string,
+  input: {
+    name?: string;
+    description?: string;
+    start_date?: string;
+    end_date?: string;
+    cover_photo_url?: string;
+    target_budget?: number | null;
+  }
+) {
+  return request<TripResponse>(`/trips/${tripId}`, {
+    method: "PUT",
+    token,
+    body: JSON.stringify(input),
+  });
+}
+
+export function getTripBudget(token: string, tripId: string) {
+  return request<TripBudgetResponse>(`/trips/${tripId}/budget`, { token });
 }
 
 export function searchCities(

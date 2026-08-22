@@ -51,6 +51,12 @@ export function TripCard({
               View
             </Link>
             <Link
+              to={`/trips/${trip.id}/budget`}
+              className="rounded-lg border border-[var(--line)] px-3 py-2 text-sm font-semibold text-[var(--ink)] transition hover:bg-[#f4f7fa]"
+            >
+              Budget
+            </Link>
+            <Link
               to={`/trips/${trip.id}/itinerary`}
               className="rounded-lg border border-[var(--line)] px-3 py-2 text-sm font-semibold text-[var(--ink)] transition hover:bg-[#f4f7fa]"
             >
@@ -65,12 +71,20 @@ export function TripCard({
             </button>
           </div>
         ) : (
-          <Link
-            to={`/trips/${trip.id}/view`}
-            className="mt-5 inline-flex text-sm font-semibold text-[var(--accent)] underline-offset-2 hover:underline"
-          >
-            View trip
-          </Link>
+          <div className="mt-5 flex items-center justify-between text-sm font-semibold">
+            <Link
+              to={`/trips/${trip.id}/view`}
+              className="text-[var(--accent)] underline-offset-2 hover:underline"
+            >
+              View trip
+            </Link>
+            <Link
+              to={`/trips/${trip.id}/budget`}
+              className="text-[var(--muted)] hover:text-[var(--ink)]"
+            >
+              Budget →
+            </Link>
+          </div>
         )}
       </div>
     </article>

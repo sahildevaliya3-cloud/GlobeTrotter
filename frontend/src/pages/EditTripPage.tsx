@@ -1,14 +1,18 @@
-import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState, type FormEvent } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 import { AppLayout } from "../components/AppLayout";
 import { CoverPreview, TextArea, TextInput } from "../components/FormFields";
-import { useAuth } from "../auth/AuthContext";
-import { ApiError, createTrip } from "../lib/api";
+import { useTripDetail } from "../hooks/useTripDetail";
+import { ApiError, toDateInputValue, updateTrip } from "../lib/api";
 import { validateCreateTrip } from "../lib/validation";
 
-export function CreateTripPage() {
+export function EditTripPage() {
+  const { id: tripId } = useParams();
   const navigate = useNavigate();
   const { token } = useAuth();
+  const { trip, loading: loadingTrip, error: loadError } = useTripDetail(tripId);
+
   const [name, setName] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -17,6 +21,23 @@ export function CreateTripPage() {
   const [targetBudget, setTargetBudget] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (trip) {
+      setName(trip.name ?? "");
+      setStartDate(trip.startDate ? toDateInputValue(trip.startDate) : "");
+      setEndDate(trip.endDate ? toDateInputValue(trip.endDate) : "");
+      setDescription(trip.description ?? "");
+      setCoverPhotoUrl(trip.coverPhotoUrl ?? "");
+      setTargetBudget(
+        trip.targetBudget != null
+          ? String(trip.targetBudget)
+          : trip.target_budget != null
+          ? String(trip.target_budget)
+          : ""
+      );
+    }
+  }, [trip]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -27,8 +48,8 @@ export function CreateTripPage() {
       return;
     }
 
-    if (!token) {
-      setError("You must be signed in to create a trip.");
+    if (!token || !tripId) {
+      setError("Unable to update trip.");
       return;
     }
 
@@ -36,38 +57,65 @@ export function CreateTripPage() {
     setError(null);
 
     try {
-      const result = await createTrip(token, {
+      await updateTrip(token, tripId, {
         name: name.trim(),
         description: description.trim() || undefined,
         start_date: startDate,
         end_date: endDate,
         cover_photo_url: coverPhotoUrl.trim() || undefined,
-        target_budget: targetBudget.trim() ? Number(targetBudget) : undefined,
+        target_budget: targetBudget.trim() ? Number(targetBudget) : null,
       });
 
-      navigate(`/trips/${result.trip.id}/itinerary`, { replace: true });
+      navigate(`/trips/${tripId}/budget`);
     } catch (err) {
       setError(
         err instanceof ApiError
           ? err.message
-          : "Unable to create trip. Please try again."
+          : "Unable to update trip. Please try again."
       );
     } finally {
       setSubmitting(false);
     }
   }
 
+  if (loadingTrip) {
+    return (
+      <AppLayout>
+        <div className="mx-auto max-w-2xl text-center">
+          <p className="text-sm text-[var(--muted)]">Loading trip details…</p>
+        </div>
+      </AppLayout>
+    );
+  }
+
+  if (loadError || !trip) {
+    return (
+      <AppLayout>
+        <div className="mx-auto max-w-2xl rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-8 text-center">
+          <h1 className="text-xl font-semibold text-[var(--ink)]">Trip not found</h1>
+          <p className="mt-2 text-sm text-[var(--danger)]">{loadError ?? "Trip does not exist."}</p>
+          <Link
+            to="/trips"
+            className="mt-6 inline-flex rounded-xl bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white"
+          >
+            Back to My Trips
+          </Link>
+        </div>
+      </AppLayout>
+    );
+  }
+
   return (
     <AppLayout>
       <section className="mx-auto max-w-2xl">
-        <p className="text-sm font-semibold tracking-[0.18em] text-[var(--accent)] uppercase">
-          New trip
+        <p className="text-xs font-bold tracking-[0.2em] text-[var(--accent)] uppercase">
+          Edit Trip
         </p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--ink)]">
-          Plan a new trip
+        <h1 className="mt-2 text-3xl font-bold tracking-tight text-[var(--ink)]">
+          {trip.name}
         </h1>
-        <p className="mt-2 text-[var(--muted)]">
-          Add the basics now — you&apos;ll build the full itinerary next.
+        <p className="mt-2 text-sm text-[var(--muted)]">
+          Update trip basic details and target budget.
         </p>
 
         <form
@@ -114,7 +162,7 @@ export function CreateTripPage() {
           <TextInput
             id="targetBudget"
             label="Target budget ($)"
-            hint="Optional. Set a budget limit to track estimated activity costs."
+            hint="Set or update your budget limit for this trip."
             value={targetBudget}
             onChange={setTargetBudget}
             placeholder="e.g. 1500"
@@ -124,7 +172,6 @@ export function CreateTripPage() {
           <TextInput
             id="coverPhotoUrl"
             label="Cover photo URL"
-            hint="Optional. Paste an image URL for now — file upload coming later."
             value={coverPhotoUrl}
             onChange={setCoverPhotoUrl}
             placeholder="https://images.unsplash.com/photo-..."
@@ -148,10 +195,10 @@ export function CreateTripPage() {
               disabled={submitting}
               className="rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--accent-dark)] disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {submitting ? "Saving…" : "Save trip"}
+              {submitting ? "Saving…" : "Save changes"}
             </button>
             <Link
-              to="/trips"
+              to={`/trips/${tripId}/budget`}
               className="rounded-xl border border-[var(--line)] px-5 py-2.5 text-sm font-semibold text-[var(--ink)] transition hover:bg-[#f4f7fa]"
             >
               Cancel

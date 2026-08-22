@@ -4,11 +4,13 @@ import { ActivitySearchPage } from "./pages/ActivitySearchPage";
 import { CitySearchPage } from "./pages/CitySearchPage";
 import { CreateTripPage } from "./pages/CreateTripPage";
 import { DashboardPage } from "./pages/DashboardPage";
+import { EditTripPage } from "./pages/EditTripPage";
 import { ItineraryBuilderPage } from "./pages/ItineraryBuilderPage";
 import { ItineraryViewPage } from "./pages/ItineraryViewPage";
 import { LoginPage } from "./pages/LoginPage";
 import { MyTripsPage } from "./pages/MyTripsPage";
 import { SignupPage } from "./pages/SignupPage";
+import { TripBudgetPage } from "./pages/TripBudgetPage";
 import { TripPlaceholderPage } from "./pages/TripPlaceholderPage";
 
 export default function App() {
@@ -33,11 +35,9 @@ export default function App() {
           element={<ActivitySearchPage />}
         />
         <Route path="/trips/:id/view" element={<ItineraryViewPage />} />
+        <Route path="/trips/:id/budget" element={<TripBudgetPage />} />
+        <Route path="/trips/:id/edit" element={<EditTripPage />} />
         <Route path="/trips/:id" element={<TripPlaceholderPage mode="view" />} />
-        <Route
-          path="/trips/:id/edit"
-          element={<TripPlaceholderPage mode="edit" />}
-        />
       </Route>
 
       <Route path="/" element={<Navigate to="/dashboard" replace />} />

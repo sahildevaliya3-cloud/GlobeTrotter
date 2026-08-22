@@ -14,7 +14,14 @@ const postgres = new EmbeddedPostgres({
   initdbFlags: ["-E", "UTF8", "--locale=C"],
 });
 
-await postgres.initialise();
+try {
+  await postgres.initialise();
+} catch (error) {
+  const message = error instanceof Error ? error.message : String(error);
+  if (!/not empty/i.test(message) && !/already exists/i.test(message)) {
+    throw error;
+  }
+}
 await postgres.start();
 
 try {

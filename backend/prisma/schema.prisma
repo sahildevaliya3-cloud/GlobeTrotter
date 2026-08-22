@@ -27,6 +27,7 @@ model Trip {
   startDate     DateTime @map("start_date") @db.Date
   endDate       DateTime @map("end_date") @db.Date
   coverPhotoUrl String?  @map("cover_photo_url")
+  targetBudget  Decimal? @map("target_budget") @db.Decimal(10, 2)
   isPublic      Boolean  @default(false) @map("is_public")
   createdAt     DateTime @default(now()) @map("created_at")
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)

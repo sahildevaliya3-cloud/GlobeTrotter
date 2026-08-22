@@ -54,25 +54,33 @@ export function ItineraryViewPage() {
 
         <div className="flex flex-wrap items-center gap-3">
           {tripId ? (
-            <Link
-              to={`/trips/${tripId}/itinerary`}
-              className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-5 py-2.5 text-sm font-semibold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
-            >
-              <svg
-                className="h-4 w-4 text-[var(--accent)]"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            <>
+              <Link
+                to={`/trips/${tripId}/budget`}
+                className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-5 py-2.5 text-sm font-semibold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                />
-              </svg>
-              Edit itinerary
-            </Link>
+                📊 Budget Breakdown
+              </Link>
+              <Link
+                to={`/trips/${tripId}/itinerary`}
+                className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-5 py-2.5 text-sm font-semibold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
+              >
+                <svg
+                  className="h-4 w-4 text-[var(--accent)]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                  />
+                </svg>
+                Edit itinerary
+              </Link>
+            </>
           ) : null}
           <Link
             to="/trips"

@@ -76,6 +76,8 @@ export function serializeTrip(trip, { includeStops = false } = {}) {
     startDate: trip.startDate,
     endDate: trip.endDate,
     coverPhotoUrl: trip.coverPhotoUrl,
+    targetBudget: trip.targetBudget != null ? Number(trip.targetBudget) : null,
+    target_budget: trip.targetBudget != null ? Number(trip.targetBudget) : null,
     isPublic: trip.isPublic,
     createdAt: trip.createdAt,
   };
@@ -127,6 +129,19 @@ export function buildTripWriteData(body, { partial = false } = {}) {
       body.cover_photo_url == null || body.cover_photo_url === ""
         ? null
         : String(body.cover_photo_url);
+  }
+
+  if (body.target_budget !== undefined) {
+    if (body.target_budget == null || body.target_budget === "") {
+      data.targetBudget = null;
+    } else {
+      const budgetNum = Number(body.target_budget);
+      if (Number.isNaN(budgetNum) || budgetNum < 0) {
+        errors.push("target_budget must be a non-negative number.");
+      } else {
+        data.targetBudget = budgetNum;
+      }
+    }
   }
 
   if (data.startDate && data.endDate && data.endDate < data.startDate) {
@@ -300,6 +315,93 @@ export function createTripsRouter(prisma) {
       return res.json({ trip: serializeTrip(trip, { includeStops: true }) });
     } catch (error) {
       console.error("GET /trips/:id", error);
+      return res.status(500).json({ error: "Something went wrong. Please try again." });
+    }
+  });
+
+  router.get("/:id/budget", async (req, res) => {
+    try {
+      if (!isValidUuid(req.params.id)) {
+        return res.status(404).json({ error: "Trip not found." });
+      }
+
+      const trip = await prisma.trip.findUnique({
+        where: { id: req.params.id },
+        include: {
+          stops: {
+            include: {
+              tripActivities: {
+                include: {
+                  activity: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (!trip) {
+        return res.status(404).json({ error: "Trip not found." });
+      }
+
+      if (trip.userId !== req.user.id) {
+        return res.status(403).json({ error: "You do not have access to this trip." });
+      }
+
+      const startMs = new Date(trip.startDate).getTime();
+      const endMs = new Date(trip.endDate).getTime();
+      const dayDiff = Math.round((endMs - startMs) / (1000 * 60 * 60 * 24)) + 1;
+      const numberOfDays = Math.max(1, dayDiff);
+
+      let totalCost = 0;
+      const categoryTotals = {};
+
+      for (const stop of trip.stops ?? []) {
+        for (const tripActivity of stop.tripActivities ?? []) {
+          const costVal =
+            tripActivity.customCost != null && tripActivity.customCost !== ""
+              ? Number(tripActivity.customCost)
+              : Number(tripActivity.activity?.cost ?? 0);
+
+          const validCost = Number.isNaN(costVal) ? 0 : costVal;
+          totalCost += validCost;
+
+          const rawCategory = tripActivity.activity?.category || "other";
+          const category = rawCategory.toLowerCase().trim();
+          categoryTotals[category] = (categoryTotals[category] ?? 0) + validCost;
+        }
+      }
+
+      const categoryBreakdown = Object.entries(categoryTotals).map(
+        ([category, cost]) => ({
+          category,
+          cost: Number(cost.toFixed(2)),
+          percentage: totalCost > 0 ? Number(((cost / totalCost) * 100).toFixed(1)) : 0,
+        })
+      );
+
+      const targetBudget =
+        trip.targetBudget != null ? Number(trip.targetBudget) : null;
+      const averageCostPerDay = Number((totalCost / numberOfDays).toFixed(2));
+      const isOverBudget =
+        targetBudget != null ? totalCost > targetBudget : false;
+      const remainingBudget =
+        targetBudget != null ? Number((targetBudget - totalCost).toFixed(2)) : null;
+
+      return res.json({
+        budget: {
+          tripId: trip.id,
+          totalCost: Number(totalCost.toFixed(2)),
+          targetBudget,
+          isOverBudget,
+          remainingBudget,
+          numberOfDays,
+          averageCostPerDay,
+          categoryBreakdown,
+        },
+      });
+    } catch (error) {
+      console.error("GET /trips/:id/budget", error);
       return res.status(500).json({ error: "Something went wrong. Please try again." });
     }
   });
