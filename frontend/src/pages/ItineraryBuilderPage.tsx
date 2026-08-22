@@ -145,6 +145,12 @@ export function ItineraryBuilderPage() {
             Add Stop
           </Link>
           <Link
+            to={`/trips/${tripId}/view`}
+            className="inline-flex rounded-xl border border-[var(--line)] px-5 py-2.5 text-sm font-semibold text-[var(--ink)] transition hover:bg-[#f4f7fa]"
+          >
+            View plan
+          </Link>
+          <Link
             to="/trips"
             className="inline-flex rounded-xl border border-[var(--line)] px-5 py-2.5 text-sm font-semibold text-[var(--ink)] transition hover:bg-[#f4f7fa]"
           >

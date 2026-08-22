@@ -29,6 +29,30 @@ export type Stop = {
   endDate: string;
   orderIndex: number;
   city?: StopCity;
+  tripActivities?: TripActivityDetail[];
+};
+
+export type TripActivityActivity = {
+  id: string;
+  cityId: string;
+  name: string;
+  category: string;
+  cost: number | string;
+  durationHours?: number;
+  duration_hours?: number;
+  description: string | null;
+  imageUrl?: string | null;
+  image_url?: string | null;
+};
+
+export type TripActivityDetail = {
+  id: string;
+  stopId: string;
+  activityId: string;
+  scheduledDate: string;
+  scheduledTime: string;
+  customCost: number | string | null;
+  activity?: TripActivityActivity;
 };
 
 export type AuthUser = {
@@ -289,14 +313,86 @@ export function formatActivityCost(cost: number | string) {
   return `$${value.toFixed(2)}`;
 }
 
+export function formatScheduledTime(scheduledTime: string) {
+  if (!scheduledTime) return "—";
+
+  const timeMatch = /^(\d{1,2}):(\d{2})(?::\d{2})?$/.exec(scheduledTime.trim());
+  if (timeMatch) {
+    const hours = parseInt(timeMatch[1], 10);
+    const minutes = parseInt(timeMatch[2], 10);
+    const period = hours >= 12 ? "PM" : "AM";
+    const hour12 = hours % 12 || 12;
+    return `${hour12}:${String(minutes).padStart(2, "0")} ${period}`;
+  }
+
+  const date = new Date(scheduledTime);
+  if (Number.isNaN(date.getTime())) return scheduledTime;
+
+  const hours = date.getUTCHours();
+  const minutes = date.getUTCMinutes();
+  const period = hours >= 12 ? "PM" : "AM";
+  const hour12 = hours % 12 || 12;
+  return `${hour12}:${String(minutes).padStart(2, "0")} ${period}`;
+}
+
+export function formatDisplayDate(isoDate: string) {
+  if (!isoDate) return "";
+  const dateStr = isoDate.slice(0, 10);
+  const parts = dateStr.split("-").map(Number);
+  if (parts.length === 3 && !parts.some(Number.isNaN)) {
+    const [year, month, day] = parts;
+    const utcDate = new Date(Date.UTC(year, month - 1, day));
+    return new Intl.DateTimeFormat("en-US", {
+      weekday: "long",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      timeZone: "UTC",
+    }).format(utcDate);
+  }
+
+  const fallback = new Date(isoDate);
+  return Number.isNaN(fallback.getTime()) ? isoDate : fallback.toDateString();
+}
+
+export function getTripActivityCost(tripActivity: TripActivityDetail) {
+  if (tripActivity.customCost != null && tripActivity.customCost !== "") {
+    return formatActivityCost(tripActivity.customCost);
+  }
+  if (tripActivity.activity?.cost != null) {
+    return formatActivityCost(tripActivity.activity.cost);
+  }
+  return "—";
+}
+
+export function getTripActivityDuration(tripActivity: TripActivityDetail) {
+  const hours =
+    tripActivity.activity?.durationHours ?? tripActivity.activity?.duration_hours;
+  if (hours == null) return null;
+  return hours === 1 ? "1 hr" : `${hours} hrs`;
+}
+
 export function formatTripDateRange(startDate: string, endDate: string) {
-  const start = new Date(startDate);
-  const end = new Date(endDate);
+  if (!startDate || !endDate) return "";
+
+  const parseUtc = (str: string) => {
+    const parts = str.slice(0, 10).split("-").map(Number);
+    if (parts.length === 3 && !parts.some(Number.isNaN)) {
+      return new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+    }
+    return new Date(str);
+  };
+
+  const start = parseUtc(startDate);
+  const end = parseUtc(endDate);
+
   const formatter = new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
+    timeZone: "UTC",
   });
+
   return `${formatter.format(start)} – ${formatter.format(end)}`;
 }
 

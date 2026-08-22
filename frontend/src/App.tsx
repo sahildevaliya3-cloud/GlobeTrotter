@@ -5,6 +5,7 @@ import { CitySearchPage } from "./pages/CitySearchPage";
 import { CreateTripPage } from "./pages/CreateTripPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { ItineraryBuilderPage } from "./pages/ItineraryBuilderPage";
+import { ItineraryViewPage } from "./pages/ItineraryViewPage";
 import { LoginPage } from "./pages/LoginPage";
 import { MyTripsPage } from "./pages/MyTripsPage";
 import { SignupPage } from "./pages/SignupPage";
@@ -31,6 +32,7 @@ export default function App() {
           path="/trips/:id/stops/:stopId/activities"
           element={<ActivitySearchPage />}
         />
+        <Route path="/trips/:id/view" element={<ItineraryViewPage />} />
         <Route path="/trips/:id" element={<TripPlaceholderPage mode="view" />} />
         <Route
           path="/trips/:id/edit"

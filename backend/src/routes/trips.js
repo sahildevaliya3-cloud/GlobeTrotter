@@ -24,8 +24,10 @@ function serializeActivity(activity) {
     category: activity.category,
     cost: activity.cost,
     durationHours: activity.durationHours,
+    duration_hours: activity.durationHours,
     description: activity.description,
     imageUrl: activity.imageUrl,
+    image_url: activity.imageUrl,
   };
 }
 
