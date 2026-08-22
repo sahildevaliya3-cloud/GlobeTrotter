@@ -35,12 +35,35 @@ export function AppLayout({ children }: AppLayoutProps) {
             <NavLink to="/trips" className={navLinkClass}>
               My Trips
             </NavLink>
+            <NavLink to="/settings" className={navLinkClass}>
+              Settings
+            </NavLink>
           </nav>
 
           <div className="flex items-center gap-3">
-            <span className="hidden text-sm text-[var(--muted)] sm:inline">
-              {user?.name}
-            </span>
+            <Link
+              to="/settings"
+              className="flex items-center gap-2 rounded-lg p-1 transition hover:bg-slate-100"
+              title="Profile & Settings"
+            >
+              {user?.photoUrl || user?.photo_url ? (
+                <img
+                  src={user.photoUrl || user.photo_url || ""}
+                  alt={user?.name}
+                  className="h-7 w-7 rounded-full object-cover border border-[var(--line)]"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = "none";
+                  }}
+                />
+              ) : (
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-white">
+                  {(user?.name || "U").charAt(0).toUpperCase()}
+                </div>
+              )}
+              <span className="hidden text-sm font-semibold text-[var(--ink)] sm:inline">
+                {user?.name}
+              </span>
+            </Link>
             <button
               type="button"
               onClick={logout}

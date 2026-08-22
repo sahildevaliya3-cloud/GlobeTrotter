@@ -64,6 +64,8 @@ export type AuthUser = {
   name: string;
   email: string;
   photoUrl: string | null;
+  photo_url?: string | null;
+  language?: string;
   createdAt: string;
 };
 
@@ -323,6 +325,28 @@ export function getPublicTrip(shareSlug: string) {
 export function cloneTrip(token: string, shareSlug: string) {
   return request<TripResponse>(`/trips/clone/${shareSlug}`, {
     method: "POST",
+    token,
+  });
+}
+
+export function getUserProfile(token: string) {
+  return request<{ user: AuthUser }>("/users/me", { token });
+}
+
+export function updateUserProfile(
+  token: string,
+  input: { name?: string; photo_url?: string | null; language?: string }
+) {
+  return request<{ user: AuthUser }>("/users/me", {
+    method: "PUT",
+    token,
+    body: JSON.stringify(input),
+  });
+}
+
+export function deleteUserAccount(token: string) {
+  return request<void>("/users/me", {
+    method: "DELETE",
     token,
   });
 }

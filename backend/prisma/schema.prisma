@@ -13,6 +13,7 @@ model User {
   email        String   @unique
   passwordHash String   @map("password_hash")
   photoUrl     String?  @map("photo_url")
+  language     String   @default("en")
   createdAt    DateTime @default(now()) @map("created_at")
   trips        Trip[]
 

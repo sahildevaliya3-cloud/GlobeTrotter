@@ -11,6 +11,7 @@ import { createPublicRouter } from "./routes/public.js";
 import { createStopsRouter } from "./routes/stops.js";
 import { createTripActivitiesRouter } from "./routes/tripActivities.js";
 import { createTripsRouter } from "./routes/trips.js";
+import { createUsersRouter } from "./routes/users.js";
 
 const app = express();
 const prisma = new PrismaClient();
@@ -43,7 +44,9 @@ function publicUser(user) {
     id: user.id,
     name: user.name,
     email: user.email,
-    photoUrl: user.photoUrl,
+    photoUrl: user.photoUrl ?? null,
+    photo_url: user.photoUrl ?? null,
+    language: user.language ?? "en",
     createdAt: user.createdAt,
   };
 }
@@ -127,6 +130,7 @@ app.post("/auth/login", async (req, res) => {
 });
 
 app.use("/public", createPublicRouter(prisma));
+app.use("/users", requireAuth, createUsersRouter(prisma));
 app.use("/cities", requireAuth, createCitiesRouter(prisma));
 app.use("/activities", requireAuth, createActivitiesRouter(prisma));
 app.use("/trips", requireAuth, createTripsRouter(prisma));
