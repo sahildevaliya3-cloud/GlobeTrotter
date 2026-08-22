@@ -9,6 +9,7 @@
     "start": "node src/index.js",
     "postgres:start": "node scripts/start-postgres.mjs",
     "test:trips": "node scripts/test-trips.mjs",
+    "test:auth": "node scripts/test-auth.mjs",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
