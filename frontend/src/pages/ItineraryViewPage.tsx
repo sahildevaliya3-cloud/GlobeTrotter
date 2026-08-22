@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { Share2, DollarSign, Pencil, ArrowLeft, List, CalendarDays } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
 import { AppLayout } from "../components/AppLayout";
 import { ItineraryCalendarView } from "../components/ItineraryCalendarView";
 import { ItineraryListView } from "../components/ItineraryListView";
+import { SkeletonList } from "../components/Skeleton";
 import { useTripDetail } from "../hooks/useTripDetail";
 import { formatActivityCost, formatTripDateRange, toggleTripShare } from "../lib/api";
 import { sortStops } from "../lib/itinerary";
@@ -96,11 +98,9 @@ export function ItineraryViewPage() {
               <button
                 type="button"
                 onClick={() => setShowShareModal(true)}
-                className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-xs font-bold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
+                className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-xs font-bold text-[var(--ink)] shadow-sm transition-all duration-200 hover:bg-slate-50 hover:shadow-md"
               >
-                <svg className="h-4 w-4 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 107.032-2.146M17 19a3 3 0 100-6 3 3 0 000 6z" />
-                </svg>
+                <Share2 size={16} className="text-[var(--accent)]" />
                 Share
                 {trip.isPublic ? (
                   <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
@@ -111,39 +111,25 @@ export function ItineraryViewPage() {
 
               <Link
                 to={`/trips/${tripId}/budget`}
-                className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-xs font-bold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
+                className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-xs font-bold text-[var(--ink)] shadow-sm transition-all duration-200 hover:bg-slate-50 hover:shadow-md"
               >
-                <svg className="h-4 w-4 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <DollarSign size={16} className="text-[var(--accent)]" />
                 Budget
               </Link>
               <Link
                 to={`/trips/${tripId}/itinerary`}
-                className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-xs font-bold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
+                className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-xs font-bold text-[var(--ink)] shadow-sm transition-all duration-200 hover:bg-slate-50 hover:shadow-md"
               >
-                <svg
-                  className="h-4 w-4 text-[var(--accent)]"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                  />
-                </svg>
+                <Pencil size={16} className="text-[var(--accent)]" />
                 Edit Trip
               </Link>
             </>
           ) : null}
           <Link
             to="/trips"
-            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-xs font-bold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
+            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-xs font-bold text-[var(--ink)] shadow-sm transition-all duration-200 hover:bg-slate-50 hover:shadow-md"
           >
-            ← My Trips
+            <ArrowLeft size={16} /> My Trips
           </Link>
         </div>
       </section>
@@ -151,7 +137,7 @@ export function ItineraryViewPage() {
       {/* Summary Cards */}
       {trip && !loading && !error ? (
         <section className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-xs">
+          <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-[var(--shadow-card)]">
             <p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
               Total Cities / Stops
             </p>
@@ -159,7 +145,7 @@ export function ItineraryViewPage() {
               {stops.length} {stops.length === 1 ? "Stop" : "Stops"}
             </p>
           </div>
-          <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-xs">
+          <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-[var(--shadow-card)]">
             <p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
               Scheduled Activities
             </p>
@@ -167,7 +153,7 @@ export function ItineraryViewPage() {
               {totalActivities} {totalActivities === 1 ? "Activity" : "Activities"}
             </p>
           </div>
-          <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-xs">
+          <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-[var(--shadow-card)]">
             <p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
               Est. Activity Cost
             </p>
@@ -180,45 +166,31 @@ export function ItineraryViewPage() {
 
       {/* Toggle View Mode */}
       <section className="mt-8 flex items-center justify-between">
-        <div className="inline-flex rounded-xl border border-[var(--line)] bg-[var(--surface)] p-1 shadow-xs">
+        <div className="inline-flex rounded-xl border border-[var(--line)] bg-[var(--surface)] p-1 shadow-sm">
           <button
             type="button"
             onClick={() => setViewMode("list")}
             className={[
-              "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition",
+              "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200",
               viewMode === "list"
-                ? "bg-[var(--accent)] text-white shadow-xs"
+                ? "bg-[var(--accent)] text-white shadow-sm"
                 : "text-[var(--muted)] hover:text-[var(--ink)]",
             ].join(" ")}
           >
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 10h16M4 14h16M4 18h16"
-              />
-            </svg>
+            <List size={16} />
             List view
           </button>
           <button
             type="button"
             onClick={() => setViewMode("calendar")}
             className={[
-              "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition",
+              "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200",
               viewMode === "calendar"
-                ? "bg-[var(--accent)] text-white shadow-xs"
+                ? "bg-[var(--accent)] text-white shadow-sm"
                 : "text-[var(--muted)] hover:text-[var(--ink)]",
             ].join(" ")}
           >
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
+            <CalendarDays size={16} />
             Calendar view
           </button>
         </div>
@@ -227,10 +199,7 @@ export function ItineraryViewPage() {
       {/* Main View Content */}
       <section className="mt-8">
         {loading ? (
-          <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-12 text-center">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[var(--accent)] border-r-transparent align-[-0.125em]" />
-            <p className="mt-4 text-sm font-medium text-[var(--muted)]">Loading itinerary details…</p>
-          </div>
+          <SkeletonList count={3} />
         ) : error ? (
           <div
             role="alert"
@@ -320,7 +289,7 @@ export function ItineraryViewPage() {
                     <button
                       type="button"
                       onClick={handleCopyUrl}
-                      className="shrink-0 rounded-xl bg-[var(--accent)] px-4 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-[var(--accent-dark)]"
+                      className="shrink-0 rounded-xl bg-[var(--accent)] px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-[var(--accent-dark)]"
                     >
                       {copied ? "✓ Copied!" : "Copy Link"}
                     </button>

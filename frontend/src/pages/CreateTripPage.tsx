@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Plus, ArrowLeft, Loader2 } from "lucide-react";
 import { AppLayout } from "../components/AppLayout";
 import { CoverPreview, TextArea, TextInput } from "../components/FormFields";
 import { useAuth } from "../auth/AuthContext";
@@ -73,7 +74,7 @@ export function CreateTripPage() {
         <form
           onSubmit={handleSubmit}
           noValidate
-          className="mt-8 space-y-5 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-[0_10px_30px_rgba(19,34,56,0.06)] sm:p-8"
+          className="mt-8 space-y-5 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-[var(--shadow-card)] sm:p-8"
         >
           <TextInput
             id="name"
@@ -146,15 +147,24 @@ export function CreateTripPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--accent-dark)] disabled:cursor-not-allowed disabled:opacity-70"
+              className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-[var(--accent-dark)] hover:shadow-md disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {submitting ? "Saving…" : "Save trip"}
+              {submitting ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  Saving…
+                </>
+              ) : (
+                <>
+                  <Plus size={16} /> Save trip
+                </>
+              )}
             </button>
             <Link
               to="/trips"
-              className="rounded-xl border border-[var(--line)] px-5 py-2.5 text-sm font-semibold text-[var(--ink)] transition hover:bg-[#f4f7fa]"
+              className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] px-5 py-2.5 text-sm font-semibold text-[var(--ink)] transition-all duration-200 hover:bg-slate-50 hover:shadow-sm"
             >
-              Cancel
+              <ArrowLeft size={16} /> Cancel
             </Link>
           </div>
         </form>

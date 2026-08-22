@@ -16,6 +16,7 @@ type AuthContextValue = {
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
+  loginWithToken: (token: string, user: AuthUser) => void;
   logout: () => void;
   updateUser: (updatedUser: AuthUser) => void;
 };
@@ -38,6 +39,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(result.user);
   }
 
+  /** Used by OAuthCallbackPage after exchanging the one-time code for a JWT. */
+  function loginWithToken(jwt: string, oauthUser: AuthUser) {
+    setToken(jwt);
+    setUser(oauthUser);
+  }
+
   function logout() {
     setToken(null);
     setUser(null);
@@ -55,6 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAuthenticated: Boolean(token),
         login,
         signup,
+        loginWithToken,
         logout,
         updateUser,
       }}

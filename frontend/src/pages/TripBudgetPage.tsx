@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { Eye, Pencil, ArrowLeft } from "lucide-react";
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { useAuth } from "../auth/AuthContext";
 import { AppLayout } from "../components/AppLayout";
+import { SkeletonStats } from "../components/Skeleton";
 import { useTripDetail } from "../hooks/useTripDetail";
 import {
   formatActivityCost,
@@ -113,31 +115,30 @@ export function TripBudgetPage() {
             <>
               <Link
                 to={`/trips/${tripId}/view`}
-                className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-xs font-bold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
+                className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-xs font-bold text-[var(--ink)] shadow-sm transition-all duration-200 hover:bg-slate-50 hover:shadow-md"
               >
-                View Plan
+                <Eye size={14} /> View Plan
               </Link>
               <Link
                 to={`/trips/${tripId}/edit`}
-                className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-xs font-bold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
+                className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-xs font-bold text-[var(--ink)] shadow-sm transition-all duration-200 hover:bg-slate-50 hover:shadow-md"
               >
-                Edit Trip
+                <Pencil size={14} /> Edit Trip
               </Link>
             </>
           ) : null}
           <Link
             to="/trips"
-            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-xs font-bold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
+            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-xs font-bold text-[var(--ink)] shadow-sm transition-all duration-200 hover:bg-slate-50 hover:shadow-md"
           >
-            ← My Trips
+            <ArrowLeft size={14} /> My Trips
           </Link>
         </div>
       </section>
 
       {loading ? (
-        <div className="mt-8 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-12 text-center">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[var(--accent)] border-r-transparent align-[-0.125em]" />
-          <p className="mt-4 text-sm font-medium text-[var(--muted)]">Calculating budget & costs…</p>
+        <div className="mt-8">
+          <SkeletonStats />
         </div>
       ) : error ? (
         <div
@@ -185,7 +186,7 @@ export function TripBudgetPage() {
                   {tripId ? (
                     <Link
                       to={`/trips/${tripId}/edit`}
-                      className="inline-flex shrink-0 items-center justify-center rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-red-700"
+                      className="inline-flex shrink-0 items-center justify-center rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-700"
                     >
                       Adjust target budget
                     </Link>
@@ -245,7 +246,7 @@ export function TripBudgetPage() {
 
           {/* Top Metric Cards */}
           <section className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-3">
-            <div className="relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-xs">
+            <div className="relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-sm">
               <p className="text-xs font-bold tracking-wider text-[var(--muted)] uppercase">
                 Total Estimated Cost
               </p>
@@ -257,7 +258,7 @@ export function TripBudgetPage() {
               </p>
             </div>
 
-            <div className="relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-xs">
+            <div className="relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-sm">
               <p className="text-xs font-bold tracking-wider text-[var(--muted)] uppercase">
                 Average Cost Per Day
               </p>
@@ -270,7 +271,7 @@ export function TripBudgetPage() {
               </p>
             </div>
 
-            <div className="relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-xs">
+            <div className="relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-sm">
               <p className="text-xs font-bold tracking-wider text-[var(--muted)] uppercase">
                 Target Budget Status
               </p>
@@ -292,7 +293,7 @@ export function TripBudgetPage() {
           {/* Breakdown Section: Pie Chart & Category Table */}
           <section className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
             {/* Pie Chart Card */}
-            <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-xs">
+            <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-sm">
               <h2 className="text-lg font-bold text-[var(--ink)]">
                 Cost Breakdown by Category
               </h2>
@@ -335,7 +336,7 @@ export function TripBudgetPage() {
             </div>
 
             {/* Category Table */}
-            <div className="flex flex-col justify-between rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-xs">
+            <div className="flex flex-col justify-between rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-sm">
               <div>
                 <h2 className="text-lg font-bold text-[var(--ink)]">
                   Category Breakdown Summary

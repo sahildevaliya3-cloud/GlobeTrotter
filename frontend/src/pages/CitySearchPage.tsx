@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { Search, ArrowLeft, MapPin } from "lucide-react";
 import { AppLayout } from "../components/AppLayout";
 import { CityCard } from "../components/CityCard";
+import { EmptyState } from "../components/EmptyState";
+import { SkeletonGrid } from "../components/Skeleton";
 import { useAuth } from "../auth/AuthContext";
 import { addStopToTrip, ApiError, searchCities, type City } from "../lib/api";
 
@@ -99,7 +102,7 @@ export function CitySearchPage() {
           <p className="text-sm font-semibold tracking-[0.18em] text-[var(--accent)] uppercase">
             City Search
           </p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--ink)]">
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-[var(--ink)]">
             Find destinations
           </h1>
           <p className="mt-2 text-[var(--muted)]">
@@ -108,23 +111,26 @@ export function CitySearchPage() {
         </div>
         <Link
           to={`/trips/${tripId}/itinerary`}
-          className="inline-flex rounded-xl border border-[var(--line)] px-5 py-2.5 text-sm font-semibold text-[var(--ink)] transition hover:bg-[#f4f7fa]"
+          className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] px-5 py-2.5 text-sm font-semibold text-[var(--ink)] transition-all duration-200 hover:bg-slate-50 hover:shadow-sm"
         >
-          Back to Itinerary
+          <ArrowLeft size={16} /> Back to Itinerary
         </Link>
       </section>
 
-      <section className="mt-8 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-[0_10px_30px_rgba(19,34,56,0.06)]">
+      <section className="mt-8 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-[var(--shadow-card)]">
         <div className="grid gap-4 md:grid-cols-[2fr_1fr]">
           <label className="block space-y-1.5">
             <span className="text-sm font-medium text-[var(--ink)]">Search</span>
-            <input
-              type="search"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search by city name…"
-              className="w-full rounded-xl border border-[var(--line)] bg-white px-3.5 py-2.5 text-[var(--ink)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[rgba(31,111,139,0.18)]"
-            />
+            <div className="relative">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
+              <input
+                type="search"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Search by city name…"
+                className="input-base !pl-9"
+              />
+            </div>
           </label>
 
           <label className="block space-y-1.5">
@@ -132,7 +138,7 @@ export function CitySearchPage() {
             <select
               value={country}
               onChange={(event) => setCountry(event.target.value)}
-              className="w-full rounded-xl border border-[var(--line)] bg-white px-3.5 py-2.5 text-[var(--ink)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[rgba(31,111,139,0.18)]"
+              className="input-base"
             >
               <option value="">All countries</option>
               {allCountries.map((option) => (
@@ -165,13 +171,15 @@ export function CitySearchPage() {
             {error}
           </div>
         ) : loading ? (
-          <p className="text-sm text-[var(--muted)]">Loading cities…</p>
+          <SkeletonGrid count={6} />
         ) : cities.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-[var(--line)] bg-white/60 p-10 text-center">
-            <p className="text-[var(--muted)]">No cities match your filters.</p>
-          </div>
+          <EmptyState
+            icon={MapPin}
+            title="No cities found"
+            description="No cities match your filters. Try a different search."
+          />
         ) : (
-          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {cities.map((city) => (
               <CityCard
                 key={city.id}

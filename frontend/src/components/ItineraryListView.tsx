@@ -61,7 +61,7 @@ export function ItineraryListView({ stops }: ItineraryListViewProps) {
                   </h2>
                 </div>
 
-                <div className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-white/80 px-4 py-2 text-sm font-semibold text-[var(--ink)] backdrop-blur-sm shadow-xs">
+                <div className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-white/80 px-4 py-2 text-sm font-semibold text-[var(--ink)] backdrop-blur-sm shadow-sm">
                   <svg
                     className="h-4 w-4 text-[var(--accent)]"
                     fill="none"
@@ -116,7 +116,7 @@ export function ItineraryListView({ stops }: ItineraryListViewProps) {
                                   <img
                                     src={tripActivity.activity.imageUrl}
                                     alt={tripActivity.activity.name}
-                                    className="h-12 w-12 rounded-lg object-cover shadow-xs"
+                                    className="h-12 w-12 rounded-lg object-cover shadow-sm"
                                   />
                                 ) : null}
                                 <div>

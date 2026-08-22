@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Plus, Plane } from "lucide-react";
 import { AppLayout } from "../components/AppLayout";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { TripCard } from "../components/TripCard";
+import { EmptyState } from "../components/EmptyState";
+import { SkeletonGrid } from "../components/Skeleton";
 import { ApiError, type Trip } from "../lib/api";
 import { useTrips } from "../hooks/useTrips";
 
@@ -39,7 +42,7 @@ export function MyTripsPage() {
           <p className="text-sm font-semibold tracking-[0.18em] text-[var(--accent)] uppercase">
             My Trips
           </p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--ink)]">
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-[var(--ink)]">
             Your adventures
           </h1>
           <p className="mt-2 text-[var(--muted)]">
@@ -48,9 +51,9 @@ export function MyTripsPage() {
         </div>
         <Link
           to="/trips/new"
-          className="inline-flex rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--accent-dark)]"
+          className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-[var(--accent-dark)] hover:shadow-md"
         >
-          Plan New Trip
+          <Plus size={16} /> Plan New Trip
         </Link>
       </section>
 
@@ -65,7 +68,7 @@ export function MyTripsPage() {
 
       <section className="mt-8">
         {loading ? (
-          <p className="text-sm text-[var(--muted)]">Loading your trips…</p>
+          <SkeletonGrid count={6} />
         ) : error ? (
           <div
             role="alert"
@@ -74,17 +77,15 @@ export function MyTripsPage() {
             {error}
           </div>
         ) : trips.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-[var(--line)] bg-white/60 p-10 text-center">
-            <p className="text-[var(--muted)]">No trips yet. Start planning one.</p>
-            <Link
-              to="/trips/new"
-              className="mt-4 inline-flex rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--accent-dark)]"
-            >
-              Plan New Trip
-            </Link>
-          </div>
+          <EmptyState
+            icon={Plane}
+            title="No trips yet"
+            description="Ready to explore? Create your first trip and start building your dream itinerary."
+            ctaLabel="Plan your first trip"
+            ctaHref="/trips/new"
+          />
         ) : (
-          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {trips.map((trip) => (
               <TripCard
                 key={trip.id}

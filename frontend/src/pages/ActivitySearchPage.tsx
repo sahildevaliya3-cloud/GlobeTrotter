@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { ArrowLeft, Sparkles } from "lucide-react";
 import { ActivityCard } from "../components/ActivityCard";
 import { AppLayout } from "../components/AppLayout";
+import { EmptyState } from "../components/EmptyState";
+import { SkeletonGrid } from "../components/Skeleton";
 import { useAuth } from "../auth/AuthContext";
 import { useTripDetail } from "../hooks/useTripDetail";
 import {
@@ -104,7 +107,7 @@ export function ActivitySearchPage() {
           <p className="text-sm font-semibold tracking-[0.18em] text-[var(--accent)] uppercase">
             Activity Search
           </p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--ink)]">
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-[var(--ink)]">
             {stop?.city?.name ?? "Find activities"}
           </h1>
           <p className="mt-2 text-[var(--muted)]">
@@ -113,14 +116,16 @@ export function ActivitySearchPage() {
         </div>
         <Link
           to={`/trips/${tripId}/itinerary`}
-          className="inline-flex rounded-xl border border-[var(--line)] px-5 py-2.5 text-sm font-semibold text-[var(--ink)] transition hover:bg-[#f4f7fa]"
+          className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] px-5 py-2.5 text-sm font-semibold text-[var(--ink)] transition-all duration-200 hover:bg-slate-50 hover:shadow-sm"
         >
-          Back to Itinerary
+          <ArrowLeft size={16} /> Back to Itinerary
         </Link>
       </section>
 
       {tripLoading ? (
-        <p className="mt-6 text-sm text-[var(--muted)]">Loading stop details…</p>
+        <div className="mt-6">
+          <SkeletonGrid count={3} />
+        </div>
       ) : tripError ? (
         <div
           role="alert"
@@ -137,14 +142,14 @@ export function ActivitySearchPage() {
         </div>
       ) : (
         <>
-          <section className="mt-8 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-[0_10px_30px_rgba(19,34,56,0.06)]">
+          <section className="mt-8 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-[var(--shadow-card)]">
             <div className="grid gap-4 md:grid-cols-2">
               <label className="block space-y-1.5">
                 <span className="text-sm font-medium text-[var(--ink)]">Category</span>
                 <select
                   value={category}
                   onChange={(event) => setCategory(event.target.value)}
-                  className="w-full rounded-xl border border-[var(--line)] bg-white px-3.5 py-2.5 text-[var(--ink)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[rgba(31,111,139,0.18)]"
+                  className="input-base"
                 >
                   <option value="">All categories</option>
                   {ACTIVITY_CATEGORIES.map((option) => (
@@ -164,7 +169,7 @@ export function ActivitySearchPage() {
                   value={maxCost}
                   onChange={(event) => setMaxCost(event.target.value)}
                   placeholder="No limit"
-                  className="w-full rounded-xl border border-[var(--line)] bg-white px-3.5 py-2.5 text-[var(--ink)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[rgba(31,111,139,0.18)]"
+                  className="input-base"
                 />
               </label>
             </div>
@@ -190,15 +195,15 @@ export function ActivitySearchPage() {
                 {error}
               </div>
             ) : loading ? (
-              <p className="text-sm text-[var(--muted)]">Loading activities…</p>
+              <SkeletonGrid count={6} />
             ) : activities.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-[var(--line)] bg-white/60 p-10 text-center">
-                <p className="text-[var(--muted)]">
-                  No activities match your filters for this city.
-                </p>
-              </div>
+              <EmptyState
+                icon={Sparkles}
+                title="No activities found"
+                description="No activities match your filters for this city. Try adjusting your search."
+              />
             ) : (
-              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+              <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
                 {activities.map((activity) => (
                   <ActivityCard
                     key={activity.id}

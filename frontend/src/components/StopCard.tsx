@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { ChevronUp, ChevronDown, Trash2, Plus, Calendar } from "lucide-react";
 import {
   formatTripDateRange,
   toDateInputValue,
@@ -54,20 +55,21 @@ export function StopCard({
   }
 
   return (
-    <article className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-[0_10px_30px_rgba(19,34,56,0.06)]">
+    <article className="card-hover rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-[var(--shadow-card)]">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="flex gap-4">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#eef4f7] text-sm font-semibold text-[var(--accent)]">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-light)] text-sm font-bold text-[var(--accent)]">
             {index + 1}
           </div>
           <div>
             <h3 className="text-lg font-semibold text-[var(--ink)]">
               {stop.city?.name ?? "Unknown city"}
             </h3>
-            <p className="text-sm text-[var(--accent)]">
+            <p className="text-sm font-medium text-[var(--accent)]">
               {stop.city?.country ?? "—"}
             </p>
-            <p className="mt-2 text-sm text-[var(--muted)]">
+            <p className="mt-2 inline-flex items-center gap-1.5 text-sm text-[var(--muted)]">
+              <Calendar size={14} />
               {formatTripDateRange(stop.startDate, stop.endDate)}
             </p>
           </div>
@@ -76,33 +78,33 @@ export function StopCard({
         <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-2">
           <Link
             to={`/trips/${tripId}/stops/${stop.id}/activities`}
-            className="flex min-h-[40px] items-center justify-center rounded-xl bg-[var(--accent)] px-3 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-[var(--accent-dark)]"
+            className="flex min-h-[40px] items-center justify-center gap-1.5 rounded-xl bg-[var(--accent)] px-3 py-2 text-xs font-bold text-white shadow-sm transition-all duration-200 hover:bg-[var(--accent-dark)] hover:shadow-md"
           >
-            + Add activities
+            <Plus size={14} /> Activities
           </Link>
           <button
             type="button"
             onClick={() => onMoveUp(stop)}
             disabled={index === 0 || saving}
-            className="flex min-h-[40px] items-center justify-center rounded-xl border border-[var(--line)] px-3 py-2 text-xs font-bold text-[var(--ink)] transition hover:bg-[#f4f7fa] disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex min-h-[40px] items-center justify-center gap-1 rounded-xl border border-[var(--line)] px-3 py-2 text-xs font-bold text-[var(--ink)] transition-all duration-200 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            ↑ Move up
+            <ChevronUp size={14} /> Up
           </button>
           <button
             type="button"
             onClick={() => onMoveDown(stop)}
             disabled={index === total - 1 || saving}
-            className="flex min-h-[40px] items-center justify-center rounded-xl border border-[var(--line)] px-3 py-2 text-xs font-bold text-[var(--ink)] transition hover:bg-[#f4f7fa] disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex min-h-[40px] items-center justify-center gap-1 rounded-xl border border-[var(--line)] px-3 py-2 text-xs font-bold text-[var(--ink)] transition-all duration-200 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            ↓ Move down
+            <ChevronDown size={14} /> Down
           </button>
           <button
             type="button"
             onClick={() => onRemove(stop)}
             disabled={saving}
-            className="flex min-h-[40px] items-center justify-center rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-bold text-red-600 transition hover:bg-red-100 disabled:opacity-50"
+            className="flex min-h-[40px] items-center justify-center gap-1 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-bold text-red-600 transition-all duration-200 hover:bg-red-100 disabled:opacity-50"
           >
-            Remove
+            <Trash2 size={14} /> Remove
           </button>
         </div>
       </div>
@@ -114,7 +116,7 @@ export function StopCard({
             type="date"
             value={startDate}
             onChange={(event) => setStartDate(event.target.value)}
-            className="w-full rounded-xl border border-[var(--line)] bg-white px-3.5 py-2.5 text-[var(--ink)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[rgba(31,111,139,0.18)]"
+            className="input-base"
           />
         </label>
         <label className="block space-y-1.5">
@@ -123,7 +125,7 @@ export function StopCard({
             type="date"
             value={endDate}
             onChange={(event) => setEndDate(event.target.value)}
-            className="w-full rounded-xl border border-[var(--line)] bg-white px-3.5 py-2.5 text-[var(--ink)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[rgba(31,111,139,0.18)]"
+            className="input-base"
           />
         </label>
       </div>
@@ -137,7 +139,7 @@ export function StopCard({
           type="button"
           onClick={handleSaveDates}
           disabled={saving}
-          className="mt-4 rounded-xl bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[var(--accent-dark)] disabled:opacity-70"
+          className="mt-4 rounded-xl bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-[var(--accent-dark)] disabled:opacity-70"
         >
           {saving ? "Saving…" : "Save dates"}
         </button>

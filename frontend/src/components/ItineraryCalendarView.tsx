@@ -207,7 +207,7 @@ export function ItineraryCalendarView({
   return (
     <div className="space-y-6">
       {/* Top Bar / City Legend */}
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-4 shadow-xs">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-4 shadow-sm">
         <div className="flex flex-wrap items-center gap-3">
           <span className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
             Stops Legend:
@@ -255,7 +255,7 @@ export function ItineraryCalendarView({
           return (
             <div
               key={dayKey}
-              className="flex flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-xs transition hover:shadow-md"
+              className="flex flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-sm transition hover:shadow-md"
             >
               {/* Day Header */}
               <div className="border-b border-[var(--line)] bg-[#f8fafc] px-5 py-4">
@@ -491,7 +491,7 @@ export function ItineraryCalendarView({
                   <button
                     type="submit"
                     disabled={saving}
-                    className="rounded-xl bg-[var(--accent)] px-5 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-[var(--accent-dark)] disabled:opacity-50"
+                    className="rounded-xl bg-[var(--accent)] px-5 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-[var(--accent-dark)] disabled:opacity-50"
                   >
                     {saving ? "Saving…" : "Save changes"}
                   </button>

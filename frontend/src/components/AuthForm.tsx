@@ -1,5 +1,6 @@
 import type { FormEvent, ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { Globe, Loader2 } from "lucide-react";
 
 type AuthLayoutProps = {
   title: string;
@@ -10,17 +11,31 @@ type AuthLayoutProps = {
 export function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-10">
-      <div className="w-full max-w-md rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-8 shadow-[0_18px_50px_rgba(19,34,56,0.08)]">
-        <div className="mb-8 text-center">
-          <p className="text-sm font-semibold tracking-[0.18em] text-[var(--accent)] uppercase">
-            GlobeTrotter
-          </p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--ink)]">
-            {title}
-          </h1>
-          <p className="mt-2 text-sm text-[var(--muted)]">{subtitle}</p>
+      <div className="w-full max-w-md overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-[var(--shadow-modal)]">
+        {/* Decorative travel header strip */}
+        <div className="relative h-28 overflow-hidden bg-gradient-to-br from-[var(--accent)] via-teal-500 to-cyan-400">
+          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }} />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm">
+                <Globe size={24} className="text-white" />
+              </div>
+              <span className="text-xl font-extrabold tracking-wider text-white uppercase">
+                GlobeTrotter
+              </span>
+            </div>
+          </div>
         </div>
-        {children}
+
+        <div className="p-8">
+          <div className="mb-8 text-center">
+            <h1 className="text-2xl font-bold tracking-tight text-[var(--ink)]">
+              {title}
+            </h1>
+            <p className="mt-2 text-sm text-[var(--muted)]">{subtitle}</p>
+          </div>
+          {children}
+        </div>
       </div>
     </div>
   );
@@ -55,7 +70,7 @@ export function Field({
         autoComplete={autoComplete}
         placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}
-        className="w-full rounded-xl border border-[var(--line)] bg-white px-3.5 py-2.5 text-[var(--ink)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[rgba(31,111,139,0.18)]"
+        className="input-base"
       />
     </label>
   );
@@ -79,7 +94,7 @@ export function AuthForm({
   footer,
 }: AuthFormProps) {
   return (
-    <form className="space-y-4" onSubmit={onSubmit} noValidate>
+    <form className="space-y-5" onSubmit={onSubmit} noValidate>
       {children}
 
       {error ? (
@@ -94,9 +109,16 @@ export function AuthForm({
       <button
         type="submit"
         disabled={submitting}
-        className="w-full rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--accent-dark)] disabled:cursor-not-allowed disabled:opacity-70"
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-[var(--accent-dark)] hover:shadow-md disabled:cursor-not-allowed disabled:opacity-70"
       >
-        {submitting ? "Please wait…" : submitLabel}
+        {submitting ? (
+          <>
+            <Loader2 size={16} className="animate-spin" />
+            Please wait…
+          </>
+        ) : (
+          submitLabel
+        )}
       </button>
 
       <div className="pt-1 text-center text-sm text-[var(--muted)]">{footer}</div>
@@ -108,7 +130,7 @@ export function AuthLink({ to, children }: { to: string; children: ReactNode }) 
   return (
     <Link
       to={to}
-      className="font-medium text-[var(--accent)] underline-offset-2 hover:underline"
+      className="font-medium text-[var(--accent)] underline-offset-2 transition-colors hover:text-[var(--accent-dark)] hover:underline"
     >
       {children}
     </Link>

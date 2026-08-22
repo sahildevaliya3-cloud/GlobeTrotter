@@ -1,7 +1,6 @@
 import type { InputHTMLAttributes, ReactNode, TextareaHTMLAttributes } from "react";
 
-const inputClassName =
-  "w-full rounded-xl border border-[var(--line)] bg-white px-3.5 py-2.5 text-[var(--ink)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[rgba(31,111,139,0.18)]";
+const inputClassName = "input-base";
 
 type FormFieldProps = {
   id: string;

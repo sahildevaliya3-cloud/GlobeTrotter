@@ -10,6 +10,7 @@ import { ItineraryViewPage } from "./pages/ItineraryViewPage";
 import { LoginPage } from "./pages/LoginPage";
 import { AdminDashboardPage } from "./pages/AdminDashboardPage";
 import { MyTripsPage } from "./pages/MyTripsPage";
+import { OAuthCallbackPage } from "./pages/OAuthCallbackPage";
 import { ProfileSettingsPage } from "./pages/ProfileSettingsPage";
 import { PublicItineraryPage } from "./pages/PublicItineraryPage";
 import { SignupPage } from "./pages/SignupPage";
@@ -20,6 +21,9 @@ export default function App() {
   return (
     <Routes>
       <Route path="/share/:shareSlug" element={<PublicItineraryPage />} />
+
+      {/* OAuth callback — must be outside both guards so it's accessible before login */}
+      <Route path="/auth/callback" element={<OAuthCallbackPage />} />
 
       <Route element={<PublicOnlyRoute />}>
         <Route path="/login" element={<LoginPage />} />

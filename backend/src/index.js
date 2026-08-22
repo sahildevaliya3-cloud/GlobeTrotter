@@ -1,10 +1,13 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import session from "express-session";
+import passport from "passport";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 import { requireAuth } from "./middleware/requireAuth.js";
+import { createAuthRouter } from "./routes/auth.js";
 import { createActivitiesRouter } from "./routes/activities.js";
 import { createAdminRouter } from "./routes/admin.js";
 import { createCitiesRouter } from "./routes/cities.js";
@@ -18,6 +21,7 @@ const app = express();
 const prisma = new PrismaClient();
 const PORT = Number(process.env.PORT) || 3001;
 const JWT_SECRET = process.env.JWT_SECRET || "globetrotter-dev-secret";
+const SESSION_SECRET = process.env.SESSION_SECRET || "globetrotter-session-secret";
 
 const configuredOrigins = (process.env.CLIENT_ORIGIN || "http://localhost:5173")
   .split(",")
@@ -42,6 +46,21 @@ app.use(
     credentials: true,
   })
 );
+
+// express-session is required by Passport during the OAuth redirect dance.
+// It is NOT used for API authentication — all protected routes use JWT Bearer tokens.
+app.use(
+  session({
+    secret: SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false, maxAge: 5 * 60 * 1000 }, // 5 min — only needed during OAuth flow
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(express.json());
 
 function isValidEmail(email) {
@@ -135,6 +154,16 @@ app.post("/auth/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid email or password." });
     }
 
+    // Guard: OAuth-only account (no password set)
+    if (!user.passwordHash) {
+      const provider = user.oauthProvider
+        ? user.oauthProvider.charAt(0).toUpperCase() + user.oauthProvider.slice(1)
+        : "a social provider";
+      return res.status(401).json({
+        error: `This account uses ${provider} sign-in. Please use the "${provider}" button on the login screen.`,
+      });
+    }
+
     const valid = await bcrypt.compare(String(password), user.passwordHash);
     if (!valid) {
       return res.status(401).json({ error: "Invalid email or password." });
@@ -147,6 +176,9 @@ app.post("/auth/login", async (req, res) => {
     return res.status(500).json({ error: "Something went wrong. Please try again." });
   }
 });
+
+// OAuth routes (Google, Apple, OTC exchange)
+app.use("/auth", createAuthRouter(prisma));
 
 app.use("/public", createPublicRouter(prisma));
 app.use("/users", requireAuth, createUsersRouter(prisma));

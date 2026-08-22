@@ -1,19 +1,38 @@
 @import "tailwindcss";
 
+/* ── Design tokens ─────────────────────────────────────────────── */
 :root {
-  --ink: #132238;
+  /* Color palette */
+  --ink: #0f1f33;
   --muted: #5b6b7c;
   --line: #d7e0ea;
   --surface: #ffffff;
-  --accent: #1f6f8b;
-  --accent-dark: #15556a;
+  --accent: #0e7490;        /* teal-600 */
+  --accent-dark: #155e75;   /* teal-700 */
+  --accent-light: #cffafe;  /* teal-100 */
+  --accent-rgb: 14, 116, 144;
+  --amber: #d97706;         /* warm amber for secondary highlights */
   --danger: #b42318;
   --danger-soft: #fef3f2;
-  --page-from: #e8f1f4;
+  --success: #15803d;
+  --success-soft: #f0fdf4;
+  --page-from: #e0f2fe;
   --page-to: #f7f4ee;
+
+  /* Radius */
+  --radius-sm: 0.5rem;    /* 8px */
+  --radius-md: 0.75rem;   /* 12px */
+  --radius-lg: 1rem;      /* 16px */
+  --radius-xl: 1.25rem;   /* 20px */
+
+  /* Shadows */
+  --shadow-card: 0 4px 16px rgba(14, 116, 144, 0.08);
+  --shadow-hover: 0 12px 32px rgba(14, 116, 144, 0.14);
+  --shadow-modal: 0 24px 64px rgba(15, 31, 51, 0.18);
 }
 
-* {
+/* ── Reset ─────────────────────────────────────────────────────── */
+*, *::before, *::after {
   box-sizing: border-box;
 }
 
@@ -25,9 +44,62 @@ body,
 
 body {
   margin: 0;
-  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-family: 'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   color: var(--ink);
   background:
-    radial-gradient(circle at top left, rgba(31, 111, 139, 0.16), transparent 42%),
+    radial-gradient(circle at top left, rgba(14, 116, 144, 0.12), transparent 42%),
     linear-gradient(160deg, var(--page-from), var(--page-to));
+}
+
+/* ── Skeleton loader ───────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #e8eef4 25%,
+    #f4f8fb 50%,
+    #e8eef4 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--radius-md);
+}
+
+/* ── Category badge colors ─────────────────────────────────────── */
+.badge-sightseeing { background: #cffafe; color: #0e7490; }
+.badge-food        { background: #fef3c7; color: #b45309; }
+.badge-adventure   { background: #fee2e2; color: #b91c1c; }
+.badge-culture     { background: #ede9fe; color: #7c3aed; }
+.badge-relaxation  { background: #dcfce7; color: #15803d; }
+
+/* ── Card hover lift ───────────────────────────────────────────── */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* ── Focus ring ────────────────────────────────────────────────── */
+.input-base {
+  width: 100%;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: white;
+  padding: 0.625rem 0.875rem;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.input-base:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
 }

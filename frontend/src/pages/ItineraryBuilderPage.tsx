@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { Plus, Eye, ArrowLeft, MapPin } from "lucide-react";
 import { AppLayout } from "../components/AppLayout";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { StopCard } from "../components/StopCard";
+import { EmptyState } from "../components/EmptyState";
+import { SkeletonList } from "../components/Skeleton";
 import { useAuth } from "../auth/AuthContext";
 import { useTripDetail } from "../hooks/useTripDetail";
 import {
@@ -126,7 +129,7 @@ export function ItineraryBuilderPage() {
           <p className="text-sm font-semibold tracking-[0.18em] text-[var(--accent)] uppercase">
             Itinerary Builder
           </p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--ink)]">
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-[var(--ink)]">
             {trip?.name ?? "Loading trip…"}
           </h1>
           {trip ? (
@@ -140,21 +143,21 @@ export function ItineraryBuilderPage() {
         <div className="flex flex-wrap gap-3">
           <Link
             to={`/trips/${tripId}/cities`}
-            className="inline-flex rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--accent-dark)]"
+            className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-[var(--accent-dark)] hover:shadow-md"
           >
-            Add Stop
+            <Plus size={16} /> Add Stop
           </Link>
           <Link
             to={`/trips/${tripId}/view`}
-            className="inline-flex rounded-xl border border-[var(--line)] px-5 py-2.5 text-sm font-semibold text-[var(--ink)] transition hover:bg-[#f4f7fa]"
+            className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] px-5 py-2.5 text-sm font-semibold text-[var(--ink)] transition-all duration-200 hover:bg-slate-50 hover:shadow-sm"
           >
-            View plan
+            <Eye size={16} /> View plan
           </Link>
           <Link
             to="/trips"
-            className="inline-flex rounded-xl border border-[var(--line)] px-5 py-2.5 text-sm font-semibold text-[var(--ink)] transition hover:bg-[#f4f7fa]"
+            className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] px-5 py-2.5 text-sm font-semibold text-[var(--ink)] transition-all duration-200 hover:bg-slate-50 hover:shadow-sm"
           >
-            Back to My Trips
+            <ArrowLeft size={16} /> My Trips
           </Link>
         </div>
       </section>
@@ -170,7 +173,7 @@ export function ItineraryBuilderPage() {
 
       <section className="mt-8">
         {loading ? (
-          <p className="text-sm text-[var(--muted)]">Loading itinerary…</p>
+          <SkeletonList count={2} />
         ) : error ? (
           <div
             role="alert"
@@ -179,19 +182,15 @@ export function ItineraryBuilderPage() {
             {error}
           </div>
         ) : stops.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-[var(--line)] bg-white/60 p-10 text-center">
-            <p className="text-[var(--muted)]">
-              No stops yet. Add your first city to begin building the itinerary.
-            </p>
-            <Link
-              to={`/trips/${tripId}/cities`}
-              className="mt-4 inline-flex rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--accent-dark)]"
-            >
-              Add Stop
-            </Link>
-          </div>
+          <EmptyState
+            icon={MapPin}
+            title="No stops yet"
+            description="Add your first city to begin building the itinerary."
+            ctaLabel="Add your first stop"
+            ctaHref={`/trips/${tripId}/cities`}
+          />
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-5">
             {stops.map((stop, index) => (
               <StopCard
                 key={stop.id}

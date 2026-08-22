@@ -148,14 +148,14 @@ export function PublicItineraryPage() {
             {user ? (
               <Link
                 to="/trips"
-                className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm font-semibold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
+                className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm font-semibold text-[var(--ink)] shadow-sm transition hover:bg-[#f4f7fa]"
               >
                 My Trips
               </Link>
             ) : (
               <Link
                 to="/login"
-                className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm font-semibold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
+                className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm font-semibold text-[var(--ink)] shadow-sm transition hover:bg-[#f4f7fa]"
               >
                 Log in
               </Link>
@@ -173,7 +173,7 @@ export function PublicItineraryPage() {
       {/* Stats Section */}
       {trip && !loading && !error ? (
         <section className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-xs">
+          <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
               Destinations / Stops
             </p>
@@ -182,7 +182,7 @@ export function PublicItineraryPage() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-xs">
+          <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
               Total Activities
             </p>
@@ -191,7 +191,7 @@ export function PublicItineraryPage() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-xs">
+          <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
               Est. Total Cost
             </p>
@@ -206,13 +206,13 @@ export function PublicItineraryPage() {
       {trip && !loading && !error ? (
         <section className="mt-6 flex items-center justify-between">
           <h2 className="text-lg font-bold text-[var(--ink)]">Trip Schedule & Itinerary</h2>
-          <div className="flex items-center gap-1 rounded-xl border border-[var(--line)] bg-[var(--surface)] p-1 shadow-xs">
+          <div className="flex items-center gap-1 rounded-xl border border-[var(--line)] bg-[var(--surface)] p-1 shadow-sm">
             <button
               type="button"
               onClick={() => setViewMode("list")}
               className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-bold transition ${
                 viewMode === "list"
-                  ? "bg-[var(--accent)] text-white shadow-xs"
+                  ? "bg-[var(--accent)] text-white shadow-sm"
                   : "text-[var(--muted)] hover:text-[var(--ink)]"
               }`}
             >
@@ -223,7 +223,7 @@ export function PublicItineraryPage() {
               onClick={() => setViewMode("calendar")}
               className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-bold transition ${
                 viewMode === "calendar"
-                  ? "bg-[var(--accent)] text-white shadow-xs"
+                  ? "bg-[var(--accent)] text-white shadow-sm"
                   : "text-[var(--muted)] hover:text-[var(--ink)]"
               }`}
             >

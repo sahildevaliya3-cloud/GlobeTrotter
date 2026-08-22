@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { AlertTriangle, Loader2, Trash2 } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
 import { AppLayout } from "../components/AppLayout";
 import {
@@ -163,7 +164,7 @@ export function ProfileSettingsPage() {
                   placeholder="https://example.com/photo.jpg"
                   value={photoUrl}
                   onChange={(e) => setPhotoUrl(e.target.value)}
-                  className="w-full rounded-xl border border-[var(--line)] bg-white px-3.5 py-2 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
+                  className="input-base text-sm"
                 />
                 <p className="text-[11px] text-[var(--muted)]">
                   Enter an image web address to display your avatar photo.
@@ -181,7 +182,7 @@ export function ProfileSettingsPage() {
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="mt-1 w-full rounded-xl border border-[var(--line)] bg-white px-3.5 py-2 text-sm font-semibold text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
+                className="mt-1 input-base text-sm font-semibold"
               />
             </div>
 
@@ -208,7 +209,7 @@ export function ProfileSettingsPage() {
               <select
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
-                className="mt-1 w-full rounded-xl border border-[var(--line)] bg-white px-3.5 py-2 text-sm font-semibold text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
+                className="mt-1 input-base text-sm font-semibold"
               >
                 {LANGUAGES.map((lang) => (
                   <option key={lang.code} value={lang.code}>
@@ -222,9 +223,16 @@ export function ProfileSettingsPage() {
               <button
                 type="submit"
                 disabled={saving || fetching}
-                className="rounded-xl bg-[var(--accent)] px-6 py-2.5 text-xs font-bold text-white shadow-xs transition hover:bg-[var(--accent-dark)] disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-6 py-2.5 text-xs font-bold text-white shadow-sm transition-all duration-200 hover:bg-[var(--accent-dark)] hover:shadow-md disabled:opacity-50"
               >
-                {saving ? "Saving Changes…" : "Save Profile Changes"}
+                {saving ? (
+                  <>
+                    <Loader2 size={14} className="animate-spin" />
+                    Saving…
+                  </>
+                ) : (
+                  "Save Profile Changes"
+                )}
               </button>
             </div>
           </form>
@@ -233,7 +241,9 @@ export function ProfileSettingsPage() {
         {/* Danger Zone — Account Deletion */}
         <div className="rounded-3xl border border-red-200 bg-red-50/50 p-6 sm:p-8 space-y-4">
           <div className="flex items-start gap-3">
-            <span className="text-xl">⚠️</span>
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
+              <AlertTriangle size={18} />
+            </div>
             <div>
               <h3 className="text-base font-bold text-red-900">Danger Zone</h3>
               <p className="mt-1 text-xs text-red-700">
@@ -250,9 +260,9 @@ export function ProfileSettingsPage() {
                 setDeleteError(null);
                 setShowDeleteModal(true);
               }}
-              className="rounded-xl bg-red-600 px-5 py-2.5 text-xs font-bold text-white shadow-xs transition hover:bg-red-700"
+              className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-xs font-bold text-white shadow-sm transition-all duration-200 hover:bg-red-700 hover:shadow-md"
             >
-              Delete Account
+              <Trash2 size={14} /> Delete Account
             </button>
           </div>
         </div>
@@ -311,7 +321,7 @@ export function ProfileSettingsPage() {
                   type="button"
                   onClick={handleConfirmDeleteAccount}
                   disabled={confirmInput.trim() !== "DELETE" || deleting}
-                  className="rounded-xl bg-red-600 px-5 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-red-700 disabled:opacity-50"
+                  className="rounded-xl bg-red-600 px-5 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-red-700 disabled:opacity-50"
                 >
                   {deleting ? "Deleting Account…" : "Permanently Delete"}
                 </button>

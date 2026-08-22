@@ -100,7 +100,7 @@ export function AdminDashboardPage() {
             <div className="mt-6">
               <Link
                 to="/dashboard"
-                className="inline-flex min-h-[44px] items-center justify-center rounded-xl bg-[var(--accent)] px-6 py-2.5 text-xs font-bold text-white shadow-xs transition hover:bg-[var(--accent-dark)]"
+                className="inline-flex min-h-[44px] items-center justify-center rounded-xl bg-[var(--accent)] px-6 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-[var(--accent-dark)]"
               >
                 Return to Home Dashboard
               </Link>
@@ -135,7 +135,7 @@ export function AdminDashboardPage() {
 
         <Link
           to="/dashboard"
-          className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-[var(--line)] bg-white px-4 py-2.5 text-xs font-bold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
+          className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-[var(--line)] bg-white px-4 py-2.5 text-xs font-bold text-[var(--ink)] shadow-sm transition hover:bg-[#f4f7fa]"
         >
           ← User View
         </Link>
@@ -160,7 +160,7 @@ export function AdminDashboardPage() {
         <>
           {/* Top KPI Cards Grid */}
           <section className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-xs">
+            <div className="relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-sm">
               <span className="text-2xl">🗺</span>
               <p className="mt-2 text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
                 Total Trips Created
@@ -171,7 +171,7 @@ export function AdminDashboardPage() {
               <p className="mt-1 text-xs text-[var(--muted)]">Across all active accounts</p>
             </div>
 
-            <div className="relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-xs">
+            <div className="relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-sm">
               <span className="text-2xl">👥</span>
               <p className="mt-2 text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
                 Registered Users
@@ -182,7 +182,7 @@ export function AdminDashboardPage() {
               <p className="mt-1 text-xs text-[var(--muted)]">Total registered accounts</p>
             </div>
 
-            <div className="relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-xs">
+            <div className="relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-sm">
               <span className="text-2xl">🏙</span>
               <p className="mt-2 text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
                 Top Destination City
@@ -193,7 +193,7 @@ export function AdminDashboardPage() {
               <p className="mt-1 text-xs text-[var(--muted)]">Most added to trip stops</p>
             </div>
 
-            <div className="relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-xs">
+            <div className="relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-sm">
               <span className="text-2xl">🎯</span>
               <p className="mt-2 text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
                 Most Popular Activity
@@ -206,7 +206,7 @@ export function AdminDashboardPage() {
           </section>
 
           {/* User Signups Over Time Line Chart */}
-          <section className="mt-8 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-xs">
+          <section className="mt-8 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-sm">
             <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-lg font-bold text-[var(--ink)]">
@@ -249,7 +249,7 @@ export function AdminDashboardPage() {
           {/* Top 10 Cities & Top 10 Activities Bar Charts */}
           <section className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
             {/* Top Cities Bar Chart */}
-            <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-xs">
+            <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-sm">
               <h2 className="text-lg font-bold text-[var(--ink)]">
                 🏙 Top 10 Most-Added Cities
               </h2>
@@ -291,7 +291,7 @@ export function AdminDashboardPage() {
             </div>
 
             {/* Top Activities Bar Chart */}
-            <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-xs">
+            <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-sm">
               <h2 className="text-lg font-bold text-[var(--ink)]">
                 🎯 Top 10 Most-Scheduled Activities
               </h2>
@@ -342,7 +342,7 @@ export function AdminDashboardPage() {
           {/* Detailed Data Tables */}
           <section className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
             {/* Top Cities Table */}
-            <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-xs">
+            <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-sm">
               <h2 className="text-base font-bold text-[var(--ink)]">
                 City Popularity Rankings
               </h2>
@@ -381,7 +381,7 @@ export function AdminDashboardPage() {
             </div>
 
             {/* Top Activities Table */}
-            <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-xs">
+            <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-sm">
               <h2 className="text-base font-bold text-[var(--ink)]">
                 Activity Popularity Rankings
               </h2>

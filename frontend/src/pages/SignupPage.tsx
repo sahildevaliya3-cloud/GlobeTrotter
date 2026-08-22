@@ -1,17 +1,23 @@
 import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { AuthForm, AuthLayout, AuthLink, Field } from "../components/AuthForm";
+import { OAuthButtons } from "../components/OAuthButtons";
 import { ApiError } from "../lib/api";
 import { validateSignup } from "../lib/validation";
 
 export function SignupPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { signup } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(
+    searchParams.get("error") === "oauth_failed"
+      ? "Sign-in was cancelled or failed. Please try again."
+      : null
+  );
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -82,6 +88,9 @@ export function SignupPage() {
           placeholder="At least 6 characters"
         />
       </AuthForm>
+
+      {/* Social sign-in — below the form, separated by "or" divider */}
+      <OAuthButtons mode="signup" />
     </AuthLayout>
   );
 }
