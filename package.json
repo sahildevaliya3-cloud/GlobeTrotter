@@ -1,0 +1,10 @@
+{
+  "name": "globetrotter",
+  "version": "1.0.0",
+  "private": true,
+  "description": "GlobeTrotter — Full-Stack Travel Planner. Run 'npm run server' and 'npm run client' in separate terminals.",
+  "scripts": {
+    "server": "cd backend && npm run dev",
+    "client": "cd frontend && npm run dev"
+  }
+}

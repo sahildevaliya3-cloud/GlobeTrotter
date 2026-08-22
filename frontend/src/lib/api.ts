@@ -66,7 +66,40 @@ export type AuthUser = {
   photoUrl: string | null;
   photo_url?: string | null;
   language?: string;
+  isAdmin?: boolean;
+  is_admin?: boolean;
   createdAt: string;
+};
+
+export type TopCityItem = {
+  id: string;
+  name: string;
+  country: string;
+  count: number;
+};
+
+export type TopActivityItem = {
+  id: string;
+  name: string;
+  category: string;
+  count: number;
+};
+
+export type SignupOverTimeItem = {
+  date: string;
+  count: number;
+};
+
+export type AdminStats = {
+  totalTrips: number;
+  totalUsers: number;
+  topCities: TopCityItem[];
+  topActivities: TopActivityItem[];
+  signupsOverTime: SignupOverTimeItem[];
+};
+
+export type AdminStatsResponse = {
+  stats: AdminStats;
 };
 
 export type AuthResponse = {
@@ -516,6 +549,10 @@ export function formatTripDateRange(startDate: string, endDate: string) {
   });
 
   return `${formatter.format(start)} – ${formatter.format(end)}`;
+}
+
+export function getAdminStats(token: string) {
+  return request<AdminStatsResponse>("/admin/stats", { token });
 }
 
 export function toDateInputValue(isoDate: string) {

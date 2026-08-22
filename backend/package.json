@@ -5,7 +5,7 @@
   "type": "module",
   "description": "GlobeTrotter API backend",
   "scripts": {
-    "dev": "node --watch src/index.js",
+    "dev": "node dev-server.mjs",
     "start": "node src/index.js",
     "build": "prisma generate",
     "postinstall": "prisma generate",
@@ -16,6 +16,7 @@
     "test:share": "node scripts/test-share.mjs",
     "test:users": "node scripts/test-users.mjs",
     "test:auth": "node scripts/test-auth.mjs",
+    "test:admin": "node scripts/test-admin.mjs",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:migrate:prod": "prisma migrate deploy",

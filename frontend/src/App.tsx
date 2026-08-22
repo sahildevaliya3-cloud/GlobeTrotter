@@ -8,6 +8,7 @@ import { EditTripPage } from "./pages/EditTripPage";
 import { ItineraryBuilderPage } from "./pages/ItineraryBuilderPage";
 import { ItineraryViewPage } from "./pages/ItineraryViewPage";
 import { LoginPage } from "./pages/LoginPage";
+import { AdminDashboardPage } from "./pages/AdminDashboardPage";
 import { MyTripsPage } from "./pages/MyTripsPage";
 import { ProfileSettingsPage } from "./pages/ProfileSettingsPage";
 import { PublicItineraryPage } from "./pages/PublicItineraryPage";
@@ -27,6 +28,7 @@ export default function App() {
 
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/admin" element={<AdminDashboardPage />} />
         <Route path="/settings" element={<ProfileSettingsPage />} />
         <Route path="/trips" element={<MyTripsPage />} />
         <Route path="/trips/new" element={<CreateTripPage />} />

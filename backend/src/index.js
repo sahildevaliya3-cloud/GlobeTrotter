@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 import { requireAuth } from "./middleware/requireAuth.js";
 import { createActivitiesRouter } from "./routes/activities.js";
+import { createAdminRouter } from "./routes/admin.js";
 import { createCitiesRouter } from "./routes/cities.js";
 import { createPublicRouter } from "./routes/public.js";
 import { createStopsRouter } from "./routes/stops.js";
@@ -63,6 +64,8 @@ function publicUser(user) {
     photoUrl: user.photoUrl ?? null,
     photo_url: user.photoUrl ?? null,
     language: user.language ?? "en",
+    isAdmin: user.isAdmin ?? false,
+    is_admin: user.isAdmin ?? false,
     createdAt: user.createdAt,
   };
 }
@@ -147,6 +150,7 @@ app.post("/auth/login", async (req, res) => {
 
 app.use("/public", createPublicRouter(prisma));
 app.use("/users", requireAuth, createUsersRouter(prisma));
+app.use("/admin", requireAuth, createAdminRouter(prisma));
 app.use("/cities", requireAuth, createCitiesRouter(prisma));
 app.use("/activities", requireAuth, createActivitiesRouter(prisma));
 app.use("/trips", requireAuth, createTripsRouter(prisma));

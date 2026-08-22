@@ -44,6 +44,11 @@ export function AppLayout({ children }: AppLayoutProps) {
             <NavLink to="/settings" className={navLinkClass}>
               Settings
             </NavLink>
+            {user?.isAdmin || user?.is_admin ? (
+              <NavLink to="/admin" className={navLinkClass}>
+                👑 Admin
+              </NavLink>
+            ) : null}
           </nav>
 
           {/* User Profile & Actions */}
@@ -127,6 +132,15 @@ export function AppLayout({ children }: AppLayoutProps) {
               >
                 ⚙ Profile & Settings
               </NavLink>
+              {user?.isAdmin || user?.is_admin ? (
+                <NavLink
+                  to="/admin"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={navLinkClass}
+                >
+                  👑 Admin Dashboard
+                </NavLink>
+              ) : null}
             </nav>
 
             {user ? (
