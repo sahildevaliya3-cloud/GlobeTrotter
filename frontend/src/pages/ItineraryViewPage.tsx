@@ -90,13 +90,13 @@ export function ItineraryViewPage() {
           ) : null}
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
           {trip ? (
             <>
               <button
                 type="button"
                 onClick={() => setShowShareModal(true)}
-                className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm font-semibold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
+                className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-xs font-bold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
               >
                 <svg className="h-4 w-4 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 107.032-2.146M17 19a3 3 0 100-6 3 3 0 000 6z" />
@@ -111,16 +111,16 @@ export function ItineraryViewPage() {
 
               <Link
                 to={`/trips/${tripId}/budget`}
-                className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm font-semibold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
+                className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-xs font-bold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
               >
                 <svg className="h-4 w-4 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                Budget Breakdown
+                Budget
               </Link>
               <Link
                 to={`/trips/${tripId}/itinerary`}
-                className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm font-semibold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
+                className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-xs font-bold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
               >
                 <svg
                   className="h-4 w-4 text-[var(--accent)]"
@@ -135,15 +135,15 @@ export function ItineraryViewPage() {
                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
                   />
                 </svg>
-                Edit itinerary
+                Edit Trip
               </Link>
             </>
           ) : null}
           <Link
             to="/trips"
-            className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm font-semibold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
+            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-xs font-bold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
           >
-            ← Back to My Trips
+            ← My Trips
           </Link>
         </div>
       </section>

@@ -393,7 +393,7 @@ export function ItineraryCalendarView({
           role="dialog"
           aria-modal="true"
         >
-          <div className="w-full max-w-lg overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             <header className="flex items-center justify-between border-b border-[var(--line)] bg-[#f7fafb] px-6 py-4">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-[var(--accent)]">

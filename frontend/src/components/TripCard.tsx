@@ -43,29 +43,29 @@ export function TripCard({
         </div>
 
         {showActions ? (
-          <div className="mt-5 flex flex-wrap gap-2">
+          <div className="mt-5 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
             <Link
               to={`/trips/${trip.id}/view`}
-              className="rounded-lg bg-[var(--accent)] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[var(--accent-dark)]"
+              className="flex min-h-[40px] items-center justify-center rounded-xl bg-[var(--accent)] px-3 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-[var(--accent-dark)]"
             >
-              View
+              View Plan
             </Link>
             <Link
               to={`/trips/${trip.id}/budget`}
-              className="rounded-lg border border-[var(--line)] px-3 py-2 text-sm font-semibold text-[var(--ink)] transition hover:bg-[#f4f7fa]"
+              className="flex min-h-[40px] items-center justify-center rounded-xl border border-[var(--line)] px-3 py-2 text-xs font-bold text-[var(--ink)] transition hover:bg-[#f4f7fa]"
             >
               Budget
             </Link>
             <Link
               to={`/trips/${trip.id}/itinerary`}
-              className="rounded-lg border border-[var(--line)] px-3 py-2 text-sm font-semibold text-[var(--ink)] transition hover:bg-[#f4f7fa]"
+              className="flex min-h-[40px] items-center justify-center rounded-xl border border-[var(--line)] px-3 py-2 text-xs font-bold text-[var(--ink)] transition hover:bg-[#f4f7fa]"
             >
-              Edit
+              Edit Trip
             </Link>
             <button
               type="button"
               onClick={() => onDelete?.(trip)}
-              className="rounded-lg border border-[#fecdca] px-3 py-2 text-sm font-semibold text-[var(--danger)] transition hover:bg-[var(--danger-soft)]"
+              className="flex min-h-[40px] items-center justify-center rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-bold text-red-600 transition hover:bg-red-100"
             >
               Delete
             </button>

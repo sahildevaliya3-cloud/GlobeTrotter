@@ -52,9 +52,9 @@ export function ActivityCard({
           type="button"
           onClick={() => onAdd(activity)}
           disabled={adding || added}
-          className="mt-5 rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--accent-dark)] disabled:cursor-not-allowed disabled:opacity-70"
+          className="mt-5 flex min-h-[44px] w-full items-center justify-center rounded-xl bg-[var(--accent)] px-4 py-2.5 text-xs font-bold text-white shadow-xs transition hover:bg-[var(--accent-dark)] disabled:cursor-not-allowed disabled:opacity-70"
         >
-          {added ? "Added" : adding ? "Adding…" : "Add"}
+          {added ? "✓ Added to Stop" : adding ? "Adding activity…" : "Add to Stop"}
         </button>
       </div>
     </article>

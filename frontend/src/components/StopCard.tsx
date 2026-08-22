@@ -73,34 +73,34 @@ export function StopCard({
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-2">
           <Link
             to={`/trips/${tripId}/stops/${stop.id}/activities`}
-            className="rounded-lg bg-[var(--accent)] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[var(--accent-dark)]"
+            className="flex min-h-[40px] items-center justify-center rounded-xl bg-[var(--accent)] px-3 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-[var(--accent-dark)]"
           >
-            Add activities
+            + Add activities
           </Link>
           <button
             type="button"
             onClick={() => onMoveUp(stop)}
             disabled={index === 0 || saving}
-            className="rounded-lg border border-[var(--line)] px-3 py-2 text-sm font-semibold text-[var(--ink)] transition hover:bg-[#f4f7fa] disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex min-h-[40px] items-center justify-center rounded-xl border border-[var(--line)] px-3 py-2 text-xs font-bold text-[var(--ink)] transition hover:bg-[#f4f7fa] disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Move up
+            ↑ Move up
           </button>
           <button
             type="button"
             onClick={() => onMoveDown(stop)}
             disabled={index === total - 1 || saving}
-            className="rounded-lg border border-[var(--line)] px-3 py-2 text-sm font-semibold text-[var(--ink)] transition hover:bg-[#f4f7fa] disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex min-h-[40px] items-center justify-center rounded-xl border border-[var(--line)] px-3 py-2 text-xs font-bold text-[var(--ink)] transition hover:bg-[#f4f7fa] disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Move down
+            ↓ Move down
           </button>
           <button
             type="button"
             onClick={() => onRemove(stop)}
             disabled={saving}
-            className="rounded-lg border border-[#fecdca] px-3 py-2 text-sm font-semibold text-[var(--danger)] transition hover:bg-[var(--danger-soft)] disabled:opacity-50"
+            className="flex min-h-[40px] items-center justify-center rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-bold text-red-600 transition hover:bg-red-100 disabled:opacity-50"
           >
             Remove
           </button>

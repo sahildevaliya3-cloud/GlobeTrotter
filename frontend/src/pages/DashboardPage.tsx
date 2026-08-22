@@ -31,9 +31,9 @@ export function DashboardPage() {
         </p>
         <Link
           to="/trips/new"
-          className="mt-6 inline-flex rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--accent-dark)]"
+          className="mt-6 inline-flex min-h-[44px] items-center justify-center rounded-xl bg-[var(--accent)] px-5 py-2.5 text-xs font-bold text-white shadow-xs transition hover:bg-[var(--accent-dark)]"
         >
-          Plan New Trip
+          + Plan New Trip
         </Link>
       </section>
 

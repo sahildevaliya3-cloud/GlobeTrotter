@@ -108,26 +108,26 @@ export function TripBudgetPage() {
           ) : null}
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
           {tripId ? (
             <>
               <Link
                 to={`/trips/${tripId}/view`}
-                className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm font-semibold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
+                className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-xs font-bold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
               >
-                👁 Itinerary View
+                View Plan
               </Link>
               <Link
                 to={`/trips/${tripId}/edit`}
-                className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm font-semibold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
+                className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-xs font-bold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
               >
-                ✏️ Edit Budget / Trip
+                Edit Trip
               </Link>
             </>
           ) : null}
           <Link
             to="/trips"
-            className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm font-semibold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
+            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-xs font-bold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
           >
             ← My Trips
           </Link>
@@ -349,8 +349,8 @@ export function TripBudgetPage() {
                     No activities assigned yet.
                   </div>
                 ) : (
-                  <div className="mt-6 overflow-hidden rounded-xl border border-[var(--line)]">
-                    <table className="w-full text-left text-sm">
+                  <div className="mt-6 overflow-x-auto rounded-xl border border-[var(--line)]">
+                    <table className="w-full min-w-[280px] text-left text-sm">
                       <thead className="bg-[#f7fafb] text-xs uppercase font-semibold text-[var(--muted)] border-b border-[var(--line)]">
                         <tr>
                           <th className="px-4 py-3">Category</th>
