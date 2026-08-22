@@ -7,6 +7,8 @@
   "scripts": {
     "dev": "node --watch src/index.js",
     "start": "node src/index.js",
+    "build": "prisma generate",
+    "postinstall": "prisma generate",
     "postgres:start": "node scripts/start-postgres.mjs",
     "test:trips": "node scripts/test-trips.mjs",
     "test:budget": "node scripts/test-budget.mjs",
@@ -16,6 +18,7 @@
     "test:auth": "node scripts/test-auth.mjs",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
+    "prisma:migrate:prod": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
     "seed": "node prisma/seed.js",
     "seed:force": "node prisma/seed.js --force"
