@@ -142,9 +142,17 @@ export function createTripsRouter(prisma) {
       const trips = await prisma.trip.findMany({
         where: { userId: req.user.id },
         orderBy: { createdAt: "desc" },
+        include: {
+          _count: { select: { stops: true } },
+        },
       });
 
-      return res.json({ trips: trips.map((trip) => serializeTrip(trip)) });
+      return res.json({
+        trips: trips.map((trip) => ({
+          ...serializeTrip(trip),
+          stopCount: trip._count.stops,
+        })),
+      });
     } catch (error) {
       console.error("GET /trips", error);
       return res.status(500).json({ error: "Something went wrong. Please try again." });
