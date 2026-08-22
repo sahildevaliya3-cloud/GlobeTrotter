@@ -1,0 +1,19 @@
+{
+  "name": "globetrotter-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "GlobeTrotter API backend",
+  "scripts": {
+    "postgres:start": "node scripts/start-postgres.mjs",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.14.0"
+  },
+  "devDependencies": {
+    "embedded-postgres": "^18.4.0-beta.17",
+    "prisma": "^6.14.0"
+  }
+}
