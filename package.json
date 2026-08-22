@@ -2,9 +2,14 @@
   "name": "globetrotter",
   "version": "1.0.0",
   "private": true,
-  "description": "GlobeTrotter — Full-Stack Travel Planner. Run 'npm run server' and 'npm run client' in separate terminals.",
+  "description": "GlobeTrotter — Full-Stack Travel Planner",
   "scripts": {
-    "server": "cd backend && npm run dev",
-    "client": "cd frontend && npm run dev"
+    "dev": "concurrently --kill-others-on-fail --prefix-colors \"bgBlue.bold,bgMagenta.bold\" --names \"SERVER,CLIENT\" \"npm run server\" \"npm run client\"",
+    "server": "npm run dev --prefix backend",
+    "client": "npm run dev --prefix frontend",
+    "postinstall": "echo \"Root level - no postinstall needed\""
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5"
   }
 }

@@ -46,79 +46,70 @@ GlobeTrotter is a modern, full-stack web application designed for seamless trip 
 ## 🚀 Quick Start — Local Development Setup
 
 ### Prerequisites
-- Node.js (v18+ recommended)
-- npm or yarn
+- Node.js v18+
+- npm
 
-### 1. Clone Repository & Install Dependencies
+### 1. Clone & Install All Dependencies
 ```bash
 git clone https://github.com/sahildevaliya3-cloud/GlobeTrotter.git
 cd GlobeTrotter
-```
 
-Install backend and frontend dependencies:
-```bash
-# Install backend packages
-cd backend
+# Install root dev tools (concurrently)
 npm install
+
+# Install backend packages
+cd backend && npm install && cd ..
 
 # Install frontend packages
-cd ../frontend
-npm install
+cd frontend && npm install && cd ..
 ```
 
----
-
-### 2. Backend Setup & Embedded Database
-
-Navigate to the `backend` directory:
+### 2. One-Time Database Setup (first run only)
 ```bash
 cd backend
-```
 
-Copy the environment example file:
-```bash
-cp .env.example .env
-```
+# Copy env template
+copy .env.example .env    # Windows
+# cp .env.example .env   # macOS/Linux
 
-Start the embedded PostgreSQL database (runs automatically on `localhost:5432`):
-```bash
+# Start postgres once to initialise, then Ctrl+C after it says "PostgreSQL is running"
 npm run postgres:start
-```
 
-Synchronize database schema and seed initial data:
-```bash
-# Push schema to database
+# Push schema and seed data
 npx prisma db push
-
-# Seed cities and activities dataset
 npm run seed
-```
 
-Start backend development server:
-```bash
-npm run dev
+cd ..
 ```
-Backend API will run at `http://localhost:3001`.
 
 ---
 
-### 3. Frontend Setup
+### 3. Start Full Dev Environment
 
-Navigate to the `frontend` directory:
+#### ✅ Option A — One command from the project root (recommended)
 ```bash
-cd frontend
-```
-
-Copy the frontend environment template:
-```bash
-cp .env.example .env
-```
-
-Start Vite dev server:
-```bash
+# From GlobeTrotter/ root:
 npm run dev
 ```
-Frontend web application will open at `http://localhost:5173`.
+This starts **both** the backend (port **3001**) and frontend (port **5173**) together with colour-coded output.
+
+#### Option B — Two separate terminals
+```bash
+# Terminal 1 — API server + embedded database
+cd backend
+npm run dev
+# → PostgreSQL starts on localhost:5432
+# → API listening on http://localhost:3001
+
+# Terminal 2 — React frontend
+cd frontend
+npm run dev
+# → Vite dev server on http://localhost:5173
+```
+
+Then open **http://localhost:5173** in your browser.
+
+> **Environment variable**: `frontend/.env` must contain `VITE_API_URL=http://localhost:3001` (already set by default — no changes needed for local development).
 
 ---
 
