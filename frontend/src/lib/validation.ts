@@ -28,3 +28,26 @@ export function validateSignup(values: {
   }
   return null;
 }
+
+export function validateCreateTrip(values: {
+  name: string;
+  startDate: string;
+  endDate: string;
+}): string | null {
+  if (!values.name.trim()) return "Trip name is required.";
+  if (!values.startDate) return "Start date is required.";
+  if (!values.endDate) return "End date is required.";
+
+  const start = new Date(values.startDate);
+  const end = new Date(values.endDate);
+
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return "Please enter valid dates.";
+  }
+
+  if (end <= start) {
+    return "End date must be after start date.";
+  }
+
+  return null;
+}

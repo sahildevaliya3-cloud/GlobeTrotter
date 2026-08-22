@@ -1,6 +1,8 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { ProtectedRoute, PublicOnlyRoute } from "./auth/ProtectedRoute";
+import { CreateTripPage } from "./pages/CreateTripPage";
 import { DashboardPage } from "./pages/DashboardPage";
+import { ItineraryBuilderPage } from "./pages/ItineraryBuilderPage";
 import { LoginPage } from "./pages/LoginPage";
 import { MyTripsPage } from "./pages/MyTripsPage";
 import { SignupPage } from "./pages/SignupPage";
@@ -17,7 +19,11 @@ export default function App() {
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/trips" element={<MyTripsPage />} />
-        <Route path="/trips/new" element={<TripPlaceholderPage mode="new" />} />
+        <Route path="/trips/new" element={<CreateTripPage />} />
+        <Route
+          path="/trips/:id/itinerary"
+          element={<ItineraryBuilderPage />}
+        />
         <Route path="/trips/:id" element={<TripPlaceholderPage mode="view" />} />
         <Route
           path="/trips/:id/edit"

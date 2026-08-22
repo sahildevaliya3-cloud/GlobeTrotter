@@ -45,7 +45,7 @@ export function TripCard({
         {showActions ? (
           <div className="mt-5 flex flex-wrap gap-2">
             <Link
-              to={`/trips/${trip.id}`}
+              to={`/trips/${trip.id}/itinerary`}
               className="rounded-lg bg-[var(--accent)] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[var(--accent-dark)]"
             >
               View
@@ -66,7 +66,7 @@ export function TripCard({
           </div>
         ) : (
           <Link
-            to={`/trips/${trip.id}`}
+            to={`/trips/${trip.id}/itinerary`}
             className="mt-5 inline-flex text-sm font-semibold text-[var(--accent)] underline-offset-2 hover:underline"
           >
             View trip

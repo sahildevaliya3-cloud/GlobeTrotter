@@ -28,6 +28,10 @@ export type TripsResponse = {
   trips: Trip[];
 };
 
+export type TripResponse = {
+  trip: Trip;
+};
+
 export class ApiError extends Error {
   status: number;
 
@@ -106,6 +110,23 @@ export function deleteTrip(token: string, tripId: string) {
   return request<void>(`/trips/${tripId}`, {
     method: "DELETE",
     token,
+  });
+}
+
+export function createTrip(
+  token: string,
+  input: {
+    name: string;
+    description?: string;
+    start_date: string;
+    end_date: string;
+    cover_photo_url?: string;
+  }
+) {
+  return request<TripResponse>("/trips", {
+    method: "POST",
+    token,
+    body: JSON.stringify(input),
   });
 }
 
