@@ -9,6 +9,26 @@ export type Trip = {
   isPublic: boolean;
   createdAt: string;
   stopCount?: number;
+  stops?: Stop[];
+};
+
+export type StopCity = {
+  id: string;
+  name: string;
+  country: string;
+  costIndex: number;
+  popularityScore: number;
+  imageUrl: string | null;
+};
+
+export type Stop = {
+  id: string;
+  tripId: string;
+  cityId: string;
+  startDate: string;
+  endDate: string;
+  orderIndex: number;
+  city?: StopCity;
 };
 
 export type AuthUser = {
@@ -46,16 +66,42 @@ export type CitiesResponse = {
 };
 
 export type StopResponse = {
-  stop: {
+  stop: Stop & { city?: StopCity };
+};
+
+export type Activity = {
+  id: string;
+  name: string;
+  category: string;
+  cost: number | string;
+  duration_hours: number;
+  description: string | null;
+  image_url: string | null;
+};
+
+export type ActivitiesResponse = {
+  activities: Activity[];
+};
+
+export type TripActivityResponse = {
+  tripActivity: {
     id: string;
-    tripId: string;
-    cityId: string;
-    startDate: string;
-    endDate: string;
-    orderIndex: number;
-    city: City;
+    stopId: string;
+    activityId: string;
+    scheduledDate: string;
+    scheduledTime: string;
+    customCost: number | string | null;
+    activity?: Activity;
   };
 };
+
+export const ACTIVITY_CATEGORIES = [
+  "sightseeing",
+  "food",
+  "adventure",
+  "culture",
+  "relaxation",
+] as const;
 
 export class ApiError extends Error {
   status: number;
@@ -131,6 +177,33 @@ export function getTrips(token: string) {
   return request<TripsResponse>("/trips", { token });
 }
 
+export function getTrip(token: string, tripId: string) {
+  return request<TripResponse>(`/trips/${tripId}`, { token });
+}
+
+export function updateStop(
+  token: string,
+  stopId: string,
+  input: {
+    start_date?: string;
+    end_date?: string;
+    order_index?: number;
+  }
+) {
+  return request<StopResponse>(`/stops/${stopId}`, {
+    method: "PUT",
+    token,
+    body: JSON.stringify(input),
+  });
+}
+
+export function deleteStop(token: string, stopId: string) {
+  return request<void>(`/stops/${stopId}`, {
+    method: "DELETE",
+    token,
+  });
+}
+
 export function deleteTrip(token: string, tripId: string) {
   return request<void>(`/trips/${tripId}`, {
     method: "DELETE",
@@ -179,6 +252,43 @@ export function addStopToTrip(
   });
 }
 
+export function searchActivities(
+  token: string,
+  params: { city_id: string; category?: string; maxCost?: string | number }
+) {
+  const query = new URLSearchParams();
+  query.set("city_id", params.city_id);
+  if (params.category?.trim()) query.set("category", params.category.trim());
+  if (params.maxCost !== undefined && params.maxCost !== "") {
+    query.set("maxCost", String(params.maxCost));
+  }
+
+  return request<ActivitiesResponse>(`/activities?${query.toString()}`, { token });
+}
+
+export function addActivityToStop(
+  token: string,
+  stopId: string,
+  input: {
+    activity_id: string;
+    scheduled_date?: string;
+    scheduled_time?: string;
+  }
+) {
+  return request<TripActivityResponse>(`/stops/${stopId}/activities`, {
+    method: "POST",
+    token,
+    body: JSON.stringify(input),
+  });
+}
+
+export function formatActivityCost(cost: number | string) {
+  const value = typeof cost === "string" ? Number(cost) : cost;
+  if (Number.isNaN(value)) return "$0";
+  if (value === 0) return "Free";
+  return `$${value.toFixed(2)}`;
+}
+
 export function formatTripDateRange(startDate: string, endDate: string) {
   const start = new Date(startDate);
   const end = new Date(endDate);
@@ -188,4 +298,8 @@ export function formatTripDateRange(startDate: string, endDate: string) {
     year: "numeric",
   });
   return `${formatter.format(start)} – ${formatter.format(end)}`;
+}
+
+export function toDateInputValue(isoDate: string) {
+  return isoDate.slice(0, 10);
 }

@@ -5,7 +5,9 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 import { requireAuth } from "./middleware/requireAuth.js";
+import { createActivitiesRouter } from "./routes/activities.js";
 import { createCitiesRouter } from "./routes/cities.js";
+import { createStopsRouter } from "./routes/stops.js";
 import { createTripsRouter } from "./routes/trips.js";
 
 const app = express();
@@ -123,7 +125,9 @@ app.post("/auth/login", async (req, res) => {
 });
 
 app.use("/cities", requireAuth, createCitiesRouter(prisma));
+app.use("/activities", requireAuth, createActivitiesRouter(prisma));
 app.use("/trips", requireAuth, createTripsRouter(prisma));
+app.use("/stops", requireAuth, createStopsRouter(prisma));
 
 app.listen(PORT, () => {
   console.log(`API listening on http://localhost:${PORT}`);

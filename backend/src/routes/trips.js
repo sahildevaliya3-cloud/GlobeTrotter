@@ -43,7 +43,7 @@ function serializeTripActivity(tripActivity) {
   };
 }
 
-function serializeStop(stop) {
+export function serializeStop(stop) {
   return {
     id: stop.id,
     tripId: stop.tripId,

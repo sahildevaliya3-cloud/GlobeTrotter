@@ -1,31 +1,149 @@
+import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { AppLayout } from "../components/AppLayout";
+import { ConfirmDialog } from "../components/ConfirmDialog";
+import { StopCard } from "../components/StopCard";
+import { useAuth } from "../auth/AuthContext";
+import { useTripDetail } from "../hooks/useTripDetail";
+import {
+  ApiError,
+  deleteStop,
+  formatTripDateRange,
+  updateStop,
+  type Stop,
+} from "../lib/api";
 
 export function ItineraryBuilderPage() {
-  const { id } = useParams();
+  const { id: tripId } = useParams();
+  const { token } = useAuth();
+  const { trip, loading, error, reload } = useTripDetail(tripId);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [savingStopId, setSavingStopId] = useState<string | null>(null);
+  const [stopToDelete, setStopToDelete] = useState<Stop | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
+  const stops = [...(trip?.stops ?? [])].sort(
+    (a, b) => a.orderIndex - b.orderIndex
+  );
+
+  async function handleSaveDates(
+    stopId: string,
+    startDate: string,
+    endDate: string
+  ) {
+    if (!token) return;
+
+    setSavingStopId(stopId);
+    setActionError(null);
+
+    try {
+      await updateStop(token, stopId, {
+        start_date: startDate,
+        end_date: endDate,
+      });
+      await reload();
+    } catch (err) {
+      setActionError(
+        err instanceof ApiError
+          ? err.message
+          : "Unable to update stop dates. Please try again."
+      );
+    } finally {
+      setSavingStopId(null);
+    }
+  }
+
+  async function swapStopOrder(current: Stop, neighbor: Stop) {
+    if (!token) return;
+
+    setSavingStopId(current.id);
+    setActionError(null);
+
+    try {
+      await updateStop(token, current.id, {
+        order_index: neighbor.orderIndex,
+      });
+      await updateStop(token, neighbor.id, {
+        order_index: current.orderIndex,
+      });
+      await reload();
+    } catch (err) {
+      setActionError(
+        err instanceof ApiError
+          ? err.message
+          : "Unable to reorder stops. Please try again."
+      );
+    } finally {
+      setSavingStopId(null);
+    }
+  }
+
+  function handleMoveUp(stop: Stop) {
+    const index = stops.findIndex((item) => item.id === stop.id);
+    if (index <= 0) return;
+    swapStopOrder(stop, stops[index - 1]);
+  }
+
+  function handleMoveDown(stop: Stop) {
+    const index = stops.findIndex((item) => item.id === stop.id);
+    if (index < 0 || index >= stops.length - 1) return;
+    swapStopOrder(stop, stops[index + 1]);
+  }
+
+  async function handleConfirmDelete() {
+    if (!token || !stopToDelete) return;
+
+    setDeleting(true);
+    setActionError(null);
+
+    try {
+      await deleteStop(token, stopToDelete.id);
+      setStopToDelete(null);
+      await reload();
+    } catch (err) {
+      setActionError(
+        err instanceof ApiError
+          ? err.message
+          : "Unable to remove this stop. Please try again."
+      );
+    } finally {
+      setDeleting(false);
+    }
+  }
+
+  if (!tripId) {
+    return (
+      <AppLayout>
+        <p className="text-[var(--danger)]">Trip not found.</p>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>
-      <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-8 shadow-[0_10px_30px_rgba(19,34,56,0.06)]">
-        <p className="text-sm font-semibold tracking-[0.18em] text-[var(--accent)] uppercase">
-          Itinerary Builder
-        </p>
-        <h1 className="mt-2 text-2xl font-semibold text-[var(--ink)]">
-          Build your itinerary
-        </h1>
-        <p className="mt-2 text-[var(--muted)]">
-          Add cities to your trip, then schedule activities for each stop.
-        </p>
-
-        <div className="mt-6 flex flex-wrap gap-3">
-          {id ? (
-            <Link
-              to={`/trips/${id}/cities`}
-              className="inline-flex rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--accent-dark)]"
-            >
-              Search &amp; Add Cities
-            </Link>
+      <section className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p className="text-sm font-semibold tracking-[0.18em] text-[var(--accent)] uppercase">
+            Itinerary Builder
+          </p>
+          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--ink)]">
+            {trip?.name ?? "Loading trip…"}
+          </h1>
+          {trip ? (
+            <p className="mt-2 text-[var(--muted)]">
+              {formatTripDateRange(trip.startDate, trip.endDate)}
+              {trip.description ? ` · ${trip.description}` : ""}
+            </p>
           ) : null}
+        </div>
+
+        <div className="flex flex-wrap gap-3">
+          <Link
+            to={`/trips/${tripId}/cities`}
+            className="inline-flex rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--accent-dark)]"
+          >
+            Add Stop
+          </Link>
           <Link
             to="/trips"
             className="inline-flex rounded-xl border border-[var(--line)] px-5 py-2.5 text-sm font-semibold text-[var(--ink)] transition hover:bg-[#f4f7fa]"
@@ -33,7 +151,74 @@ export function ItineraryBuilderPage() {
             Back to My Trips
           </Link>
         </div>
-      </div>
+      </section>
+
+      {actionError ? (
+        <div
+          role="alert"
+          className="mt-6 rounded-xl border border-[#fecdca] bg-[var(--danger-soft)] px-4 py-3 text-sm text-[var(--danger)]"
+        >
+          {actionError}
+        </div>
+      ) : null}
+
+      <section className="mt-8">
+        {loading ? (
+          <p className="text-sm text-[var(--muted)]">Loading itinerary…</p>
+        ) : error ? (
+          <div
+            role="alert"
+            className="rounded-xl border border-[#fecdca] bg-[var(--danger-soft)] px-4 py-3 text-sm text-[var(--danger)]"
+          >
+            {error}
+          </div>
+        ) : stops.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-[var(--line)] bg-white/60 p-10 text-center">
+            <p className="text-[var(--muted)]">
+              No stops yet. Add your first city to begin building the itinerary.
+            </p>
+            <Link
+              to={`/trips/${tripId}/cities`}
+              className="mt-4 inline-flex rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--accent-dark)]"
+            >
+              Add Stop
+            </Link>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {stops.map((stop, index) => (
+              <StopCard
+                key={stop.id}
+                stop={stop}
+                tripId={tripId}
+                index={index}
+                total={stops.length}
+                saving={savingStopId === stop.id}
+                onSaveDates={handleSaveDates}
+                onMoveUp={handleMoveUp}
+                onMoveDown={handleMoveDown}
+                onRemove={setStopToDelete}
+              />
+            ))}
+          </div>
+        )}
+      </section>
+
+      <ConfirmDialog
+        open={Boolean(stopToDelete)}
+        title="Remove stop?"
+        message={
+          stopToDelete
+            ? `Remove ${stopToDelete.city?.name ?? "this city"} from your itinerary? Scheduled activities for this stop will also be deleted.`
+            : ""
+        }
+        confirmLabel="Remove stop"
+        loading={deleting}
+        onCancel={() => {
+          if (!deleting) setStopToDelete(null);
+        }}
+        onConfirm={handleConfirmDelete}
+      />
     </AppLayout>
   );
 }

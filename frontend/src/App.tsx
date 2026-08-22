@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { ProtectedRoute, PublicOnlyRoute } from "./auth/ProtectedRoute";
+import { ActivitySearchPage } from "./pages/ActivitySearchPage";
 import { CitySearchPage } from "./pages/CitySearchPage";
 import { CreateTripPage } from "./pages/CreateTripPage";
 import { DashboardPage } from "./pages/DashboardPage";
@@ -26,6 +27,10 @@ export default function App() {
           element={<ItineraryBuilderPage />}
         />
         <Route path="/trips/:id/cities" element={<CitySearchPage />} />
+        <Route
+          path="/trips/:id/stops/:stopId/activities"
+          element={<ActivitySearchPage />}
+        />
         <Route path="/trips/:id" element={<TripPlaceholderPage mode="view" />} />
         <Route
           path="/trips/:id/edit"
