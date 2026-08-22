@@ -1,7 +1,19 @@
+import crypto from "node:crypto";
 import express from "express";
 
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function generateSlug(title) {
+  const base = String(title || "trip")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 30);
+  const suffix = crypto.randomBytes(4).toString("hex");
+  return `${base || "trip"}-${suffix}`;
+}
 
 function parseDateOnly(value, fieldName) {
   if (value == null || value === "") {
@@ -79,6 +91,9 @@ export function serializeTrip(trip, { includeStops = false } = {}) {
     targetBudget: trip.targetBudget != null ? Number(trip.targetBudget) : null,
     target_budget: trip.targetBudget != null ? Number(trip.targetBudget) : null,
     isPublic: trip.isPublic,
+    shareSlug: trip.shareSlug ?? null,
+    share_slug: trip.shareSlug ?? null,
+    ownerName: trip.user?.name,
     createdAt: trip.createdAt,
   };
 
@@ -406,6 +421,57 @@ export function createTripsRouter(prisma) {
     }
   });
 
+  router.put("/:id/share", async (req, res) => {
+    try {
+      if (!isValidUuid(req.params.id)) {
+        return res.status(404).json({ error: "Trip not found." });
+      }
+
+      const trip = await prisma.trip.findUnique({
+        where: { id: req.params.id },
+        include: { user: true },
+      });
+
+      if (!trip) {
+        return res.status(404).json({ error: "Trip not found." });
+      }
+
+      if (trip.userId !== req.user.id) {
+        return res.status(403).json({ error: "You do not have access to this trip." });
+      }
+
+      const nextIsPublic =
+        req.body?.is_public !== undefined
+          ? Boolean(req.body.is_public)
+          : !trip.isPublic;
+
+      let shareSlug = trip.shareSlug;
+      if (nextIsPublic && !shareSlug) {
+        shareSlug = generateSlug(trip.name);
+      }
+
+      const updated = await prisma.trip.update({
+        where: { id: req.params.id },
+        data: {
+          isPublic: nextIsPublic,
+          shareSlug,
+        },
+        include: {
+          user: true,
+        },
+      });
+
+      return res.json({
+        trip: serializeTrip(updated),
+        shareSlug: updated.shareSlug,
+        isPublic: updated.isPublic,
+      });
+    } catch (error) {
+      console.error("PUT /trips/:id/share", error);
+      return res.status(500).json({ error: "Something went wrong. Please try again." });
+    }
+  });
+
   router.put("/:id", async (req, res) => {
     try {
       if (!isValidUuid(req.params.id)) {
@@ -448,6 +514,97 @@ export function createTripsRouter(prisma) {
       return res.json({ trip: serializeTrip(trip) });
     } catch (error) {
       console.error("PUT /trips/:id", error);
+      return res.status(500).json({ error: "Something went wrong. Please try again." });
+    }
+  });
+
+  router.post("/clone/:shareSlug", async (req, res) => {
+    try {
+      const shareSlug = String(req.params.shareSlug || "").trim();
+      if (!shareSlug) {
+        return res.status(400).json({ error: "Share slug is required." });
+      }
+
+      const sourceTrip = await prisma.trip.findFirst({
+        where: {
+          shareSlug,
+          OR: [{ isPublic: true }, { userId: req.user.id }],
+        },
+        include: {
+          stops: {
+            orderBy: { orderIndex: "asc" },
+            include: {
+              tripActivities: {
+                orderBy: { scheduledDate: "asc" },
+              },
+            },
+          },
+        },
+      });
+
+      if (!sourceTrip) {
+        return res.status(404).json({ error: "Public trip not found." });
+      }
+
+      const clonedTrip = await prisma.trip.create({
+        data: {
+          userId: req.user.id,
+          name: sourceTrip.name.startsWith("Copy of")
+            ? sourceTrip.name
+            : `Copy of ${sourceTrip.name}`,
+          description: sourceTrip.description,
+          startDate: sourceTrip.startDate,
+          endDate: sourceTrip.endDate,
+          coverPhotoUrl: sourceTrip.coverPhotoUrl,
+          targetBudget: sourceTrip.targetBudget,
+          isPublic: false,
+        },
+      });
+
+      for (const stop of sourceTrip.stops ?? []) {
+        const clonedStop = await prisma.stop.create({
+          data: {
+            tripId: clonedTrip.id,
+            cityId: stop.cityId,
+            startDate: stop.startDate,
+            endDate: stop.endDate,
+            orderIndex: stop.orderIndex,
+          },
+        });
+
+        for (const ta of stop.tripActivities ?? []) {
+          await prisma.tripActivity.create({
+            data: {
+              stopId: clonedStop.id,
+              activityId: ta.activityId,
+              scheduledDate: ta.scheduledDate,
+              scheduledTime: ta.scheduledTime,
+              customCost: ta.customCost,
+            },
+          });
+        }
+      }
+
+      const fullCloned = await prisma.trip.findUnique({
+        where: { id: clonedTrip.id },
+        include: {
+          user: true,
+          stops: {
+            include: {
+              city: true,
+              tripActivities: {
+                include: { activity: true },
+              },
+            },
+          },
+        },
+      });
+
+      return res.status(201).json({
+        trip: serializeTrip(fullCloned, { includeStops: true }),
+      });
+    } catch (error) {
+      console.error("POST /trips/clone/:shareSlug", error);
       return res.status(500).json({ error: "Something went wrong. Please try again." });
     }
   });

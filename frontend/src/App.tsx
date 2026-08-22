@@ -9,6 +9,7 @@ import { ItineraryBuilderPage } from "./pages/ItineraryBuilderPage";
 import { ItineraryViewPage } from "./pages/ItineraryViewPage";
 import { LoginPage } from "./pages/LoginPage";
 import { MyTripsPage } from "./pages/MyTripsPage";
+import { PublicItineraryPage } from "./pages/PublicItineraryPage";
 import { SignupPage } from "./pages/SignupPage";
 import { TripBudgetPage } from "./pages/TripBudgetPage";
 import { TripPlaceholderPage } from "./pages/TripPlaceholderPage";
@@ -16,6 +17,8 @@ import { TripPlaceholderPage } from "./pages/TripPlaceholderPage";
 export default function App() {
   return (
     <Routes>
+      <Route path="/share/:shareSlug" element={<PublicItineraryPage />} />
+
       <Route element={<PublicOnlyRoute />}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />

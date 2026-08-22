@@ -9,6 +9,8 @@ export type Trip = {
   targetBudget?: number | null;
   target_budget?: number | null;
   isPublic: boolean;
+  shareSlug?: string | null;
+  ownerName?: string;
   createdAt: string;
   stopCount?: number;
   stops?: Stop[];
@@ -297,6 +299,32 @@ export function updateTrip(
 
 export function getTripBudget(token: string, tripId: string) {
   return request<TripBudgetResponse>(`/trips/${tripId}/budget`, { token });
+}
+
+export function toggleTripShare(
+  token: string,
+  tripId: string,
+  isPublic?: boolean
+) {
+  return request<{ trip: Trip; shareSlug: string; isPublic: boolean }>(
+    `/trips/${tripId}/share`,
+    {
+      method: "PUT",
+      token,
+      body: JSON.stringify({ is_public: isPublic }),
+    }
+  );
+}
+
+export function getPublicTrip(shareSlug: string) {
+  return request<TripResponse>(`/public/${shareSlug}`);
+}
+
+export function cloneTrip(token: string, shareSlug: string) {
+  return request<TripResponse>(`/trips/clone/${shareSlug}`, {
+    method: "POST",
+    token,
+  });
 }
 
 export function searchCities(

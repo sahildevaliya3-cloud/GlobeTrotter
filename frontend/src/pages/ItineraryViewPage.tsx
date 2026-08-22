@@ -1,18 +1,23 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 import { AppLayout } from "../components/AppLayout";
 import { ItineraryCalendarView } from "../components/ItineraryCalendarView";
 import { ItineraryListView } from "../components/ItineraryListView";
 import { useTripDetail } from "../hooks/useTripDetail";
-import { formatActivityCost, formatTripDateRange } from "../lib/api";
+import { formatActivityCost, formatTripDateRange, toggleTripShare } from "../lib/api";
 import { sortStops } from "../lib/itinerary";
 
 type ViewMode = "list" | "calendar";
 
 export function ItineraryViewPage() {
   const { id: tripId } = useParams();
-  const { trip, loading, error, reload } = useTripDetail(tripId);
+  const { token } = useAuth();
+  const { trip, loading, error, reload, setTrip } = useTripDetail(tripId);
   const [viewMode, setViewMode] = useState<ViewMode>("list");
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [togglingShare, setTogglingShare] = useState(false);
 
   const stops = sortStops(trip?.stops ?? []);
 
@@ -34,6 +39,39 @@ export function ItineraryViewPage() {
     );
   }, 0);
 
+  const publicUrl = trip?.shareSlug
+    ? `${window.location.origin}/share/${trip.shareSlug}`
+    : "";
+
+  async function handleToggleShare() {
+    if (!token || !tripId) return;
+
+    setTogglingShare(true);
+    try {
+      const res = await toggleTripShare(token, tripId, !trip?.isPublic);
+      setTrip((prev) =>
+        prev
+          ? {
+              ...prev,
+              isPublic: res.isPublic,
+              shareSlug: res.shareSlug,
+            }
+          : null
+      );
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to toggle trip share status.");
+    } finally {
+      setTogglingShare(false);
+    }
+  }
+
+  function handleCopyUrl() {
+    if (!publicUrl) return;
+    navigator.clipboard.writeText(publicUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
   return (
     <AppLayout>
       <section className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
@@ -53,17 +91,36 @@ export function ItineraryViewPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          {tripId ? (
+          {trip ? (
             <>
+              <button
+                type="button"
+                onClick={() => setShowShareModal(true)}
+                className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm font-semibold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
+              >
+                <svg className="h-4 w-4 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 107.032-2.146M17 19a3 3 0 100-6 3 3 0 000 6z" />
+                </svg>
+                Share
+                {trip.isPublic ? (
+                  <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
+                    Public
+                  </span>
+                ) : null}
+              </button>
+
               <Link
                 to={`/trips/${tripId}/budget`}
-                className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-5 py-2.5 text-sm font-semibold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
+                className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm font-semibold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
               >
-                📊 Budget Breakdown
+                <svg className="h-4 w-4 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Budget Breakdown
               </Link>
               <Link
                 to={`/trips/${tripId}/itinerary`}
-                className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-5 py-2.5 text-sm font-semibold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
+                className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm font-semibold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
               >
                 <svg
                   className="h-4 w-4 text-[var(--accent)]"
@@ -84,7 +141,7 @@ export function ItineraryViewPage() {
           ) : null}
           <Link
             to="/trips"
-            className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-5 py-2.5 text-sm font-semibold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
+            className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm font-semibold text-[var(--ink)] shadow-xs transition hover:bg-[#f4f7fa]"
           >
             ← Back to My Trips
           </Link>
@@ -193,6 +250,100 @@ export function ItineraryViewPage() {
           />
         )}
       </section>
+
+      {/* Share Modal */}
+      {showShareModal ? (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="w-full max-w-lg overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <header className="flex items-center justify-between border-b border-[var(--line)] bg-[#f7fafb] px-6 py-4">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-[var(--accent)]">
+                  Share Trip Itinerary
+                </span>
+                <h3 className="text-lg font-bold text-[var(--ink)]">
+                  {trip?.name ?? "Trip"}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowShareModal(false)}
+                className="rounded-lg p-1.5 text-[var(--muted)] hover:bg-[#e2e8f0] hover:text-[var(--ink)]"
+              >
+                ✕
+              </button>
+            </header>
+
+            <div className="p-6 space-y-6">
+              <div className="flex items-center justify-between gap-4 rounded-xl border border-[var(--line)] bg-[#f8fafc] p-4">
+                <div>
+                  <p className="text-sm font-bold text-[var(--ink)]">
+                    Public Link Access
+                  </p>
+                  <p className="text-xs text-[var(--muted)]">
+                    {trip?.isPublic
+                      ? "Anyone with the link can view a read-only version of this trip."
+                      : "Only you can view this trip right now."}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleToggleShare}
+                  disabled={togglingShare}
+                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                    trip?.isPublic ? "bg-[var(--accent)]" : "bg-gray-300"
+                  }`}
+                >
+                  <span
+                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                      trip?.isPublic ? "translate-x-5" : "translate-x-0"
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {trip?.isPublic && publicUrl ? (
+                <div className="space-y-2">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[var(--ink)]">
+                    Public Share URL
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      readOnly
+                      value={publicUrl}
+                      className="w-full rounded-xl border border-[var(--line)] bg-[#f1f5f9] px-3.5 py-2 text-xs font-mono text-[var(--ink)] focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleCopyUrl}
+                      className="shrink-0 rounded-xl bg-[var(--accent)] px-4 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-[var(--accent-dark)]"
+                    >
+                      {copied ? "✓ Copied!" : "Copy Link"}
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-[var(--muted)]">
+                    Tip: Viewers will see your itinerary and can optionally clone it to their account.
+                  </p>
+                </div>
+              ) : null}
+            </div>
+
+            <footer className="border-t border-[var(--line)] bg-[#f8fafc] px-6 py-3.5 text-right">
+              <button
+                type="button"
+                onClick={() => setShowShareModal(false)}
+                className="rounded-xl border border-[var(--line)] px-4 py-2 text-xs font-bold text-[var(--ink)] transition hover:bg-[#e2e8f0]"
+              >
+                Close
+              </button>
+            </footer>
+          </div>
+        </div>
+      ) : null}
     </AppLayout>
   );
 }

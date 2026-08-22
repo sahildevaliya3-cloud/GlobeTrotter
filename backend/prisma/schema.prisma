@@ -29,6 +29,7 @@ model Trip {
   coverPhotoUrl String?  @map("cover_photo_url")
   targetBudget  Decimal? @map("target_budget") @db.Decimal(10, 2)
   isPublic      Boolean  @default(false) @map("is_public")
+  shareSlug     String?  @unique @map("share_slug")
   createdAt     DateTime @default(now()) @map("created_at")
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   stops         Stop[]

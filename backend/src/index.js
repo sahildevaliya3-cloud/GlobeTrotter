@@ -7,6 +7,7 @@ import { PrismaClient } from "@prisma/client";
 import { requireAuth } from "./middleware/requireAuth.js";
 import { createActivitiesRouter } from "./routes/activities.js";
 import { createCitiesRouter } from "./routes/cities.js";
+import { createPublicRouter } from "./routes/public.js";
 import { createStopsRouter } from "./routes/stops.js";
 import { createTripActivitiesRouter } from "./routes/tripActivities.js";
 import { createTripsRouter } from "./routes/trips.js";
@@ -125,6 +126,7 @@ app.post("/auth/login", async (req, res) => {
   }
 });
 
+app.use("/public", createPublicRouter(prisma));
 app.use("/cities", requireAuth, createCitiesRouter(prisma));
 app.use("/activities", requireAuth, createActivitiesRouter(prisma));
 app.use("/trips", requireAuth, createTripsRouter(prisma));

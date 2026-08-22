@@ -11,6 +11,7 @@
     "test:trips": "node scripts/test-trips.mjs",
     "test:budget": "node scripts/test-budget.mjs",
     "test:trip-activities": "node scripts/test-trip-activities.mjs",
+    "test:share": "node scripts/test-share.mjs",
     "test:auth": "node scripts/test-auth.mjs",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
