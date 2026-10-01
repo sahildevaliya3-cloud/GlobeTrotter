@@ -6,8 +6,8 @@ GlobeTrotter is a modern, full-stack web application designed for seamless trip 
 
 ## 🔗 Live Application Links
 
-- **Frontend Web App**: `https://globetrotter-app.vercel.app` *(Replace with your deployed Vercel/Netlify URL)*
-- **Backend API**: `https://globetrotter-api.onrender.com` *(Replace with your deployed Render/Railway URL)*
+- **Frontend Web App**: `https://globetrotter-app.vercel.app`
+- **Backend API**: `https://globetrotter-api.onrender.com`
 - **API Health Check**: `https://globetrotter-api.onrender.com/health`
 
 ---
